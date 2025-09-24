@@ -1,0 +1,29 @@
+
+body {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+.background {
+    background-color: #19222F;
+    height: 100%;
+    width: 100%;
+}
+
+.filmContainer {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2em;
+    align-items: center;
+    justify-content: center;
+}
+.filmBox {
+    width: 220px;
+    height: 284px;
+    background-color: #303C4D;
+    margin: 1em;
+}
+
+.filmContainer h1 {
+    color: white;
+}
