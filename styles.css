@@ -1,8 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
 
 body {
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 .background {
     background-color: #19222F;
@@ -26,4 +29,5 @@ body {
 
 .filmContainer h1 {
     color: white;
+    font-weight: 900;;
 }
