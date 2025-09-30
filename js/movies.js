@@ -4,7 +4,7 @@ import { fetchAnyUrl } from './modulejson.js';
 const API_BASE = 'http://localhost:8080/api/v1';
 
 let allMovies = [];
-let container, modal, titleEl, genresEl, descEl;
+let container, modal, titleEl, genresEl, descEl, trailerContainer;
 
 document.addEventListener('DOMContentLoaded', () => {
     container = document.querySelector('.filmBoxContainer');
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     titleEl = document.getElementById('movieTitle');
     genresEl = document.getElementById('genres');
     descEl = document.getElementById('movieDescription');
+    trailerContainer = document.getElementById("trailerContainer");
 
     fetchMovies();
 
@@ -62,7 +63,38 @@ function openMovieDetails(movie) {
     const genreNames = (movie.genres).map(g => g.genre);
     genresEl.textContent = genreNames.join(' • ');
     descEl.textContent = movie.description;
+
+    const videoId = getYouTubeId(movie.trailerLink)
+    trailerContainer.innerHTML = "";
+
+    if (videoId) {
+        trailerContainer.innerHTML = `
+            <iframe width="560" height="315" 
+                src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>`;
+    } else {
+        alert("Invalid Link");
+    }
+
     modal.style.display = 'flex';
+}
+
+function getYouTubeId(trailerLink) {
+    let url = trailerLink;
+
+    let videoId = "";
+    const urlObj = new URL(url);
+
+    if (urlObj.hostname.includes("youtube.com")) {
+        videoId = urlObj.searchParams.get("v");
+    } else if (urlObj.hostname.includes("youtu.be")) {
+        videoId = urlObj.pathname.slice(1);
+    }
+
+    return videoId;
 }
 
 function closeMovieDetails() {
