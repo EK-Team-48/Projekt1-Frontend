@@ -34,5 +34,3 @@ function openPopUP() {
   checkoutButton.style.display = "none";
 }
 
-
-
