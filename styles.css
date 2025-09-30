@@ -30,6 +30,7 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .filmBoxContainer {
     display: flex;
     flex-wrap: wrap;
@@ -37,6 +38,7 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .filmBox {
     width: 220px;
     height: 284px;
