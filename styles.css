@@ -6,6 +6,7 @@
     --background-secondary: #19222F;
     --background-tertiary: #222C3C;
     --text-primary: #9AA5B1;
+    --text-secondary: #E6EAF0;
 }
 
 /*
@@ -65,19 +66,30 @@ body {
     justify-content: center;
 }
 .filmBoxContainer {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* display: flex;
+    flex-wrap: wrap; */
     padding: 2em;
+    gap: 1em;
     align-items: center;
     justify-content: center;
 }
 .filmBox {
+    display: flex;
     width: 220px;
     margin: 1em;
-    display: flex;
     flex-direction: column;
+    align-items: center;
     cursor: pointer;
-    transition: transform .15s ease, box-shadow .15s ease;
+    transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.filmBox h3 {
+    font-size: 1em;
+    color: var(--text-secondary);
+    text-align: center;
+    height: 3em;
 }
 .filmBox:hover {
     transform: scale(1.05);
@@ -211,4 +223,38 @@ body {
     font-weight: 600;
     font-size: 16px;
     margin-top: 1vh;
+}
+
+.square {
+    /* --- 1. The Main Seat (Square) --- */
+    width: 100px;
+    height: 100px;
+    background-color: #3498db;
+    border-radius: 2em;
+    position: relative;
+    
+}
+
+/* --- 2. Left Armrest (using ::before) --- */
+.square::before {
+    content: '';
+    position: absolute;
+    top: 5px; 
+    left: -20px; 
+    width: 15px;
+    height: 90px; 
+    background-color: #3498db; 
+    border-radius: 2em;
+}
+
+/* --- 3. Right Armrest (using ::after) --- */
+.square::after {
+    content: '';
+    position: absolute;
+    top: 5px; 
+    right: -20px; 
+    width: 15px;
+    height: 90px; 
+    background-color: #3498db; 
+    border-radius: 2em;
 }
