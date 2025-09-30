@@ -1,49 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Payment</title>
 </head>
+
 <body>
-
     <div class="display-button">
-        <button class="btn"> Go to checkout</button>
+        <button class="btn" id="checkoutButton">Go to checkout</button>
     </div>
 
-    <div class="checkout-box">
+    <div class="checkout-box" id="checkoutBox">
+        <form class="checkout-form">
+            <h1>Checkout</h1>
 
-        <form class="create-user"> 
-        <h1>Checkout</h1>
+            <div class="form-section">
+                <h2>Billing Address</h2>
+                <div class="grid-2">
+                    <div class="input-box">
+                        <label for="firstName">First name</label>
+                        <input type="text" name="firstName" placeholder="Insert First name">
+                    </div>
+                    <div class="input-box">
+                        <label for="lastName">Last name</label>
+                        <input type="text" name="lastName" placeholder="Insert Last name">
+                    </div>
+                </div>
 
-        <div class="input-box">
-        <label for="firstName">First name</label>
-        <input type="text" name="firstName" placeholder="Insert First name">
-        </div>
+                <div class="input-box">
+                    <label for="number">Number</label>
+                    <input type="number" name="number" placeholder="Insert your number">
+                </div>
 
-        <div class="input-box">
-        <label for="lastName">Last name</label>
-        <input type="text" name="lastName" placeholder="Insert Last name">
-        </div>
+                <div class="input-box">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" placeholder="Insert your email">
+                </div>
 
-        <div class="input-box">
-        <label for="age"> Date of birth </label>
-        <input type="date" name="age">
-        </div>
+                <div class="input-box">
+                    <label for="address">Address</label>
+                    <input type="text" name="address" placeholder="Street and number">
+                </div>
 
-        <div class="input-box">
-        <label for="number"> Phone number </label>
-        <input type="number" name="number" placeholder="Insert your phone number">
-        </div>
+                <div class="grid-2">
+                    <div class="input-box">
+                        <label for="city">City</label>
+                        <input type="text" name="city" placeholder="City">
+                    </div>
+                    <div class="input-box">
+                        <label for="zip">Zip</label>
+                        <input type="text" name="zip" placeholder="Zip">
+                    </div>
+                </div>
+            </div>
 
-        <div class="input-box btn">
-        <button> Submit </button>
-        </div>
+            <div class="form-section">
+                <h2>Payment</h2>
+                <div class="input-box">
+                    <label for="cardName">Name on Card</label>
+                    <input type="text" name="cardName" placeholder="John Doe">
+                </div>
+                <div class="input-box">
+                    <label for="cardNumber">Credit card number</label>
+                    <input type="text" name="cardNumber" placeholder="1111-2222-3333-4444">
+                </div>
+
+                <div class="grid-3">
+                    <div class="input-box">
+                        <label for="expMonth">Exp Month</label>
+                        <input type="text" name="expMonth" placeholder="09">
+                    </div>
+                    <div class="input-box">
+                        <label for="expYear">Exp Year</label>
+                        <input type="text" name="expYear" placeholder="2026">
+                    </div>
+                    <div class="input-box">
+                        <label for="cvv">CVV</label>
+                        <input type="text" name="cvv" placeholder="352">
+                    </div>
+                </div>
+            </div>
+
+            <div class="submit-box">
+                <button type="submit">Continue to checkout</button>
+            </div>
         </form>
-
     </div>
-    
+
+
     <script src="app.js" defer></script>
 </body>
+
 </html>
