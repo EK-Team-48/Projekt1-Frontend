@@ -33,3 +33,4 @@ function openPopUP() {
   test.classList.add("active");
   checkoutButton.style.display = "none";
 }
+
