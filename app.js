@@ -1,5 +1,8 @@
-const test = document.querySelector(".create-user");
-test?.addEventListener("submit", async (event) => {
+const createUser = document.querySelector(".create-user");
+const test = document.querySelector(".checkout-box")
+const checkoutButton = document.querySelector(".btn");
+
+createUser?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const creds = Object.fromEntries(new FormData(test));
 
@@ -19,3 +22,14 @@ test?.addEventListener("submit", async (event) => {
         console.error(err);
     }
 });
+
+checkoutButton?.addEventListener("click", (e) => {
+  e.preventDefault();
+  openPopUP();
+});
+
+function openPopUP() {
+  if (!test) return;
+  test.classList.add("active");
+  checkoutButton.style.display = "none";
+}
