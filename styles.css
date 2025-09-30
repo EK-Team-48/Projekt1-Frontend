@@ -8,6 +8,40 @@
     --text-primary: #9AA5B1;
 }
 
+/*
+Header
+ */
+.gradient-bg {
+    background: var(--background);
+    color: var(--text-primary);
+}
+
+header {
+    padding: 1.5rem 0 1.5rem 3rem;
+}
+
+.title {
+    font-weight: 800;
+    font-size: clamp(2rem, 3vw + 1rem, 3rem);
+    margin: 0 0 .5rem;
+}
+
+/*
+Body
+ */
+
+.filter {
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+select, input, button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
 
 body {
     margin: 0px;
@@ -39,13 +73,89 @@ body {
 }
 .filmBox {
     width: 220px;
-    height: 284px;
-    background-color: var(--background-tertiary);
     margin: 1em;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.filmBox:hover {
+    transform: scale(1.05);
+}
+.filmBox__poster {
+    width: 100%;
+    height: 284px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+.filmBox__title {
+    margin: 8px 4px 0;
+    color: white;
+    font-weight: 700;
+    line-height: 1.2;
+    position: static;
 }
 
 .filmContainer h1 {
     color: var(--text-primary);
+    font-weight: 900;;
+}
+
+.movieDetails {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.movieDetails-content {
+    background: var(--background);
+    padding: 20px;
+    border-radius: 8px;
+    width: 60%;
+    max-width: 600px;
+    color: white;
+}
+
+.trailer {
+    margin-top: 12px;
+}
+
+.trailer iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    display: block;
+    border-radius: 8px;
+}
+
+.close-btn {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.book-btn {
+    margin-top: 1rem;
+    padding: 0.7rem 1.2rem;
+    border: 0;
+    border-radius: 12px;
+    font-weight: 800;
+    color: #fff;
+    background: var(--text-primary);
+    cursor: pointer;
+}
+
+.book-btn:hover {
+    transform: translate(1px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.3);
     font-weight: 900;
 }
 
@@ -101,5 +211,4 @@ body {
     font-weight: 600;
     font-size: 16px;
     margin-top: 1vh;
-    
 }
