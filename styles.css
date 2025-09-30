@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 :root {
-    --background: linear-gradient(90deg, var(--background-primary) 0%, var(--background-secondary) 50% );
+    --background: linear-gradient(90deg, var(--background-primary) 0%, var(--background-secondary) 50%);
     --background-primary: #0D131C;
     --background-secondary: #19222F;
     --background-tertiary: #222C3C;
@@ -38,7 +38,9 @@ Body
     align-items: center;
 }
 
-select, input, button {
+select,
+input,
+button {
     padding: 8px 12px;
     border-radius: 4px;
     border: 1px solid #ccc;
@@ -93,9 +95,11 @@ body {
     text-align: center;
     height: 3em;
 }
+
 .filmBox:hover {
     transform: scale(1.05);
 }
+
 .filmBox__poster {
     width: 100%;
     height: 284px;
@@ -103,6 +107,7 @@ body {
     background-position: center;
     overflow: hidden;
 }
+
 .filmBox__title {
     margin: 8px 4px 0;
     color: white;
@@ -123,7 +128,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     z-index: 100;
     align-items: center;
     justify-content: center;
@@ -169,98 +174,127 @@ body {
 
 .book-btn:hover {
     transform: translate(1px);
-    box-shadow: 0 12px 28px rgba(0,0,0,.3);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .3);
     font-weight: 900;
 }
 
+.display-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.btn {
+    padding: 14px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.btn:hover {
+    background: #1c5ed6;
+}
+
 .checkout-box {
-  opacity: 0;
-  transform: translate(-50%, -60%) scale(0.9);
-  pointer-events: none;         
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 420px;
-  border: 2px solid blue;
-  border-radius: 10px;
-  padding: 30px 40px;
-  background-color: var(--background-primary);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 800px;
+    width: 90%;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    padding: 30px;
+    background: var(--background-tertiary);
+    border-radius: 10px;
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
 .checkout-box.active {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-  pointer-events: auto;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
 }
 
-.checkout-box h1 {
+.checkout-form h1 {
     text-align: center;
-    font-size: 36px;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
 }
 
-.checkout-box .input-box {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    margin: 30px 0;
+.form-section h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.input-box label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
 }
 
 .input-box input {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    outline: none;
-    border: 1px solid blue;
-    border-radius: 40px;
-    font-size: 16px;
+    padding: 12px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: var(--background-primary);
     color: var(--text-primary);
-    text-align: center;
+    font-size: 14px;
 }
 
 .input-box input::placeholder {
     color: var(--text-primary);
+    opacity: 0.6;
 }
 
-.input-box button {
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.submit-box {
+    margin-top: 20px;
+}
+
+.submit-box button {
     width: 100%;
-    height: 45px;
-    border: none;
-    outline: none;
-    background-color: blue;
-    border-radius: 40px;
-    cursor: pointer;
-    font-weight: 600;
+    padding: 14px;
     font-size: 16px;
-    margin-top: 1vh;
-   }
-
-.display-button {
-    position: absolute; 
-    margin: 0 auto;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.btn {
-    width: 100%;
-    height: 45px;
-    border: none;
-    outline: none;
-    background-color: blue;
-    border-radius: 40px;
-    cursor: pointer;
     font-weight: 600;
-    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+    transition: 0.3s ease;
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.submit-box button:hover {
+    background: #1c5ed6;
 }
-
 
 .square {
     /* --- 1. The Main Seat (Square) --- */
@@ -269,18 +303,18 @@ input[type=number]::-webkit-outer-spin-button {
     background-color: #3498db;
     border-radius: 2em;
     position: relative;
-    
+
 }
 
 /* --- 2. Left Armrest (using ::before) --- */
 .square::before {
     content: '';
     position: absolute;
-    top: 5px; 
-    left: -20px; 
+    top: 5px;
+    left: -20px;
     width: 15px;
-    height: 90px; 
-    background-color: #3498db; 
+    height: 90px;
+    background-color: #3498db;
     border-radius: 2em;
 }
 
@@ -288,10 +322,16 @@ input[type=number]::-webkit-outer-spin-button {
 .square::after {
     content: '';
     position: absolute;
-    top: 5px; 
-    right: -20px; 
+    top: 5px;
+    right: -20px;
     width: 15px;
-    height: 90px; 
-    background-color: #3498db; 
+    height: 90px;
+    background-color: #3498db;
     border-radius: 2em;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
