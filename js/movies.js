@@ -46,7 +46,7 @@ function renderMovies(list) {
         poster.className = 'filmBox__poster';
         poster.style.backgroundImage = `url("${m.movieImg}")`;
 
-        const t = document.createElement('div');
+        const t = document.createElement('h3');
         t.className = 'filmBox__title';
         t.textContent = m.movieTitle;
 
