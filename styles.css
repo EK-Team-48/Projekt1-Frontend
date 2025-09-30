@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
+:root {
+    --background: linear-gradient(90deg, var(--background-primary) 0%, var(--background-secondary) 50% );
+    --background-primary: #0D131C;
+    --background-secondary: #19222F;
+    --background-tertiary: #222C3C;
+    --text-primary: #9AA5B1;
+}
+
 
 body {
     margin: 0px;
@@ -8,12 +16,19 @@ body {
     font-family: 'Inter', sans-serif;
 }
 .background {
-    background-color: #19222F;
+    background: var(--background);
     height: 100%;
     width: 100%;
 }
 
 .filmContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 2em;
+    align-items: center;
+    justify-content: center;
+}
+.filmBoxContainer {
     display: flex;
     flex-wrap: wrap;
     padding: 2em;
@@ -23,11 +38,11 @@ body {
 .filmBox {
     width: 220px;
     height: 284px;
-    background-color: #303C4D;
+    background-color: var(--background-tertiary);
     margin: 1em;
 }
 
 .filmContainer h1 {
-    color: white;
+    color: var(--text-primary);
     font-weight: 900;;
 }
