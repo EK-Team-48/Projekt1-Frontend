@@ -1,20 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 :root {
-    --background: linear-gradient(90deg, var(--background-primary) 0%, var(--background-secondary) 50% );
+    --background: linear-gradient(90deg, var(--background-primary) 0%, var(--background-secondary) 50%);
     --background-primary: #0D131C;
     --background-secondary: #19222F;
     --background-tertiary: #222C3C;
     --text-primary: #9AA5B1;
+    --text-secondary: #E6EAF0;
 }
 
+/*
+Header
+ */
+.gradient-bg {
+    background: var(--background);
+    color: var(--text-primary);
+}
+
+header {
+    padding: 1.5rem 0 1.5rem 3rem;
+}
+
+.title {
+    font-weight: 800;
+    font-size: clamp(2rem, 3vw + 1rem, 3rem);
+    margin: 0 0 .5rem;
+}
+
+/*
+Body
+ */
+
+.filter {
+    padding: 20px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+select,
+input,
+button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
 
 body {
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
+    background-color: var(--background-primary);
 }
+
 .background {
     background: var(--background);
     height: 100%;
@@ -28,21 +67,493 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .filmBoxContainer {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* display: flex;
+    flex-wrap: wrap; */
     padding: 2em;
+    gap: 1em;
     align-items: center;
     justify-content: center;
 }
+
 .filmBox {
+    display: flex;
     width: 220px;
-    height: 284px;
-    background-color: var(--background-tertiary);
     margin: 1em;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.filmBox h3 {
+    font-size: 1em;
+    color: var(--text-secondary);
+    text-align: center;
+    height: 3em;
+}
+
+.filmBox:hover {
+    transform: scale(1.05);
+}
+
+.filmBox__poster {
+    width: 100%;
+    height: 284px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.filmBox__title {
+    margin: 8px 4px 0;
+    color: white;
+    font-weight: 700;
+    line-height: 1.2;
+    position: static;
 }
 
 .filmContainer h1 {
     color: var(--text-primary);
-    font-weight: 900;;
+    font-weight: 900;
 }
+
+.movieDetails {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.movieDetails-content {
+    background: var(--background);
+    padding: 20px;
+    border-radius: 8px;
+    width: 60%;
+    max-width: 600px;
+    color: white;
+}
+
+.trailer {
+    margin-top: 12px;
+}
+
+.trailer iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    display: block;
+    border-radius: 8px;
+}
+
+.close-btn {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.book-btn {
+    margin-top: 1rem;
+    padding: 0.7rem 1.2rem;
+    border: 0;
+    border-radius: 12px;
+    font-weight: 800;
+    color: #fff;
+    background: var(--text-primary);
+    cursor: pointer;
+}
+
+.book-btn:hover {
+    transform: translate(1px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .3);
+    font-weight: 900;
+}
+
+.display-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.btn {
+    padding: 14px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.btn:hover {
+    background: #1c5ed6;
+}
+
+.checkout-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 800px;
+    width: 90%;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    padding: 30px;
+    background: var(--background-tertiary);
+    border-radius: 10px;
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.checkout-box.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+}
+
+.checkout-form h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+.form-section h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.input-box label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+}
+
+.input-box input {
+    padding: 12px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: var(--background-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.input-box input::placeholder {
+    color: var(--text-primary);
+    opacity: 0.6;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.submit-box {
+    margin-top: 20px;
+}
+
+.submit-box button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+    transition: 0.3s ease;
+}
+
+.submit-box button:hover {
+    background: #1c5ed6;
+}
+
+.square {
+    /* --- 1. The Main Seat (Square) --- */
+    width: 100px;
+    height: 100px;
+    background-color: #3498db;
+    border-radius: 2em;
+    position: relative;
+
+}
+
+/* --- 2. Left Armrest (using ::before) --- */
+.square::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: -20px;
+    width: 15px;
+    height: 90px;
+    background-color: #3498db;
+    border-radius: 2em;
+}
+
+/* --- 3. Right Armrest (using ::after) --- */
+.square::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: -20px;
+    width: 15px;
+    height: 90px;
+    background-color: #3498db;
+    border-radius: 2em;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+
+/* ================================================== */
+/* SCREENING SCHEDULE STYLES - CUSTOM FOR YOUR PROJECT */
+/* ================================================== */
+
+/* Container holding all the day boxes */
+.screeningBoxContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2.5rem; /* increased gap between days */
+    justify-items: stretch;
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+}
+
+/* Each day box */
+.screeningBox {
+    background: #222C3C;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
+    width: 100%;
+    margin-bottom: 1.5rem; /* extra space between rows if needed */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.screeningBox:hover {
+    transform: translateY(-4px);
+}
+
+/* Date at the top of the day box */
+.screeningBox time {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #E6EAF0; /* light text */
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #9AA5B1; /* light border */
+    padding-bottom: 0.5rem;
+}
+
+/* Container for all time/theater boxes in a day */
+.boxForTimes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* Individual theater/time boxes (green squares) */
+.timeBox {
+    background-color: #1FA45B; /* green square */
+    color: #fff;
+    padding: 0.6rem 0.6rem;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px; /* slightly rounded corners */
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.timeBox:hover {
+    background-color: #159046;
+    transform: scale(1.05);
+}
+
+/* Theater name inside timeBox */
+.theaterName {
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* Start time inside timeBox */
+.startTime {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .screeningBoxContainer {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .timeBox {
+        width: 60px;
+        height: 60px;
+        font-size: 0.85rem;
+    }
+}
+
+
+
+
+
+.vælgSpilletid {
+    font-size: 2rem; /* make it bigger */
+    font-weight: 700; /* bold */
+    color: var(--text-secondary); /* use your theme color */
+    text-align: center; /* center it */
+    margin: 2rem 0 1rem 0; /* spacing above and below */
+    letter-spacing: 1px; /* a little spacing between letters */
+    border-bottom: 2px solid #27ae60; /* subtle green underline */
+    padding-bottom: 0.5rem; /* space between text and underline */
+}
+
+
+
+
+/* ---------------- Movie Container Fix ---------------- */
+.movieContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem auto; /* added bottom margin to push screenings down */
+    position: relative; /* ensure normal flow */
+    z-index: 1; /* keep it above background but below absolute elements if any */
+}
+
+.movieBox {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--background-tertiary);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    overflow: hidden;
+    width: 100%;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 2rem; /* space between movie and screenings */
+}
+
+/* Poster */
+.moviePoster {
+    flex: 0 0 200px;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px 0 0 12px;
+}
+
+/* Movie Details inside the movie box */
+.movieDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* center title + description vertically */
+    padding: 1rem;
+    flex: 1; /* take remaining space */
+    position: static;
+    z-index: auto;
+    background: linear-gradient(180deg, #19222F 0%, #222C3C 100%); /* theme gradient */
+    border-radius: 12px; /* rounded corners like your boxes */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); /* subtle shadow */
+    color: var(--text-secondary); /* text color from theme */
+}
+
+
+
+/* Title, Description, Ratings */
+.movieTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.movieDesc {
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    margin-bottom: 0.8rem;
+}
+
+.ageRating {
+    font-weight: 700;
+    color: #27ae60;
+    margin-bottom: 0.5rem;
+}
+
+.genreList {
+    font-style: italic;
+    color: #a0d2eb;
+}
+
+/* Responsive: Stack poster + details */
+@media (max-width: 900px) {
+    .movieBox {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .moviePoster {
+        width: 100%;
+        height: 300px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .movieDetails {
+        width: 100%;
+        padding: 1rem;
+        align-items: center;
+    }
+}
+
