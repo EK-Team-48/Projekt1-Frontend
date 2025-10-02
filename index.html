@@ -8,33 +8,59 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="background">
-        <section class="filmContainer">
-            <h1>Vælg Film</h1>
-            <div class="filmBoxContainer">
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-                <div class="filmBox"></div>
-            </div>
 
-        </section>
-        <section class="screeningContainer">
-            <h1>Vælg spilletid</h1>
-            <div class="screeningBoxContainer">
-            </div>
-        </section>
-
-
-
-
+<header class="gradient-bg">
+    <div>
+        <h1 class="title">Kino48</h1>
     </div>
+</header>
+
+    <div class="background">
+        <!-- filter -->
+        <div class="filter">
+            <input type="text" id="search" placeholder="Search movies...">
+            <select id="genre">
+                <option value="">All Genres</option>
+                <option value="Action">Action</option>
+                <option value="Drama">Drama</option>
+                <option value="Comedy">Comedy</option>
+            </select>
+            <select id="rating">
+                <option value="">All Ratings</option>
+                <option value="PG13">+13</option>
+                <option value="PG18">+18</option>
+            </select>
+            <button onclick="filtermovies()">Filter</button>
+        </div>
+
+        <!-- Movie selection -->
+        <section class="filmContainer">
+            <h1>Choose Movie</h1>
+            <div class="filmBoxContainer">
+                
+            </div>
+        </section>
+
+        <!-- Movie details -->
+        <div class="movieDetails" id="movieDetails">
+            <div class="movieDetails-content">
+                <span class="close-btn" onclick="closeMovieDetails()">x</span>
+                <h2 id="movieTitle"></h2>
+                <h3 id="genres"></h3>
+                <p id="movieDescription"></p>
+                <div id="trailerContainer" class="trailer"></div>
+                <button class="book-btn" id="bookMovieButton"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="movieContainer">
+        </div>
+
+            <h1 class="vælgSpilletid">Vælg spilletid</h1>
+            <div class="screeningBoxContainer">
+                
+            </div>
 </body>
-<script stype="module" src="screening.js"></script>
+<script type="module" src="screening.js"></script>
 </html>

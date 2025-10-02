@@ -494,7 +494,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /* Movie Details inside the movie box */
-.movieDetails {
+.movieDetailsBook {
     display: flex;
     flex-direction: column;
     justify-content: center; /* center title + description vertically */

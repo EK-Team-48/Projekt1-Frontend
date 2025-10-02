@@ -1,20 +1,175 @@
 import{fetchAnyUrl} from "/modulejson.js";
 console.log("er i consolen")
 
-//de her to url skal blive mere dynamiske, så 5 tallet ikke er hardcodet, men kommer fra simons side
-const urlScreening = "http://localhost:8080/api/v1/screenings/5";
-const urlMovie = "http://localhost:8080/api/v1/movies/5";
+////////////////////////////////
+// SIMON ///
+/////////////////////////////////
 
-let scrContainer, movieContainer;
-let screenings, movie = [];
+const API_BASE = 'http://localhost:8080/api/v1';
+
+let allMovies = [];
+let container, modal, titleEl, genresEl, descEl, trailerContainer, background, scrContainer, bookBtn, movieContainer, chooseTime;
+
+document.addEventListener('DOMContentLoaded', () => {
+    scrContainer = document.querySelector(".screeningBoxContainer");
+    scrContainer.style.display = 'none';
+
+    movieContainer = document.querySelector(".movieContainer");
+    movieContainer.style.display = "none";
+
+    chooseTime = document.querySelector(".vælgSpilletid")
+    chooseTime.style.display = "none";
+
+    container = document.querySelector('.filmBoxContainer');
+    modal = document.getElementById('movieDetails');
+    titleEl = document.getElementById('movieTitle');
+    genresEl = document.getElementById('genres');
+    descEl = document.getElementById('movieDescription');
+    trailerContainer = document.getElementById("trailerContainer");
+    background = document.querySelector(".background");
+    bookBtn = document.getElementById("bookMovieButton");
+
+    fetchMovies();
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMovieDetails(); });
+    modal.addEventListener('click', e => { if (e.target === modal) closeMovieDetails(); });
+});
+
+async function fetchMovies() {
+    try {
+        allMovies = await fetchAnyUrl(`${API_BASE}/movies`);
+        renderMovies(allMovies);
+    } catch (err) {
+        container.innerHTML = `${err.message}</p>`;
+    }
+}
+
+function renderMovies(list) {
+    container.innerHTML = '';
+    if (!list.length) {
+        container.innerHTML = `<p>No movie found.</p>`;
+        return;
+    }
+
+    list.forEach(m => {
+        const box = document.createElement('div');
+        box.className = 'filmBox';
+        box.tabIndex = 0;
+        box.setAttribute('role', 'button');
+
+        const poster = document.createElement('div');
+        poster.className = 'filmBox__poster';
+        poster.style.backgroundImage = `url("${m.movieImg}")`;
+
+        const t = document.createElement('h3');
+        t.className = 'filmBox__title';
+        t.textContent = m.movieTitle;
+
+        
+
+
+
+        box.appendChild(poster);
+        box.appendChild(t);
+        box.addEventListener('click', () => openMovieDetails(m));
+
+        container.appendChild(box);
+    });
+}
+
+function openMovieDetails(movie) {
+    titleEl.textContent = movie.movieTitle;
+    const genreNames = (movie.genres).map(g => g.genre);
+    genresEl.textContent = genreNames.join(' • ');
+    descEl.textContent = movie.description;
+
+    const videoId = getYouTubeId(movie.trailerLink)
+    trailerContainer.innerHTML = "";
+
+    if (videoId) {
+        trailerContainer.innerHTML = `
+            <iframe width="560" height="315" 
+                src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>`;
+    } else {
+        alert("Invalid Link");
+    }
+
+    bookBtn.textContent = "Book";
+    bookBtn.className="book-btn";
+
+
+
+    bookBtn.addEventListener("click", () => {
+    
+        displayScreenings();
+    
+        fetchScreening(movie.movieId);
+    })
+
+    modal.appendChild(bookBtn)
+
+
+
+    modal.style.display = 'flex';
+}
+
+function getYouTubeId(trailerLink) {
+    let url = trailerLink;
+
+    let videoId = "";
+    const urlObj = new URL(url);
+
+    if (urlObj.hostname.includes("youtube.com")) {
+        videoId = urlObj.searchParams.get("v");
+    } else if (urlObj.hostname.includes("youtu.be")) {
+        videoId = urlObj.pathname.slice(1);
+    }
+
+    return videoId;
+}
+
+function closeMovieDetails() {
+    modal.style.display = 'none';
+}
+
+window.closeMovieDetails = closeMovieDetails;
+
+
+function displayScreenings(){
+    modal.style.display = 'none';
+    background.style.display = 'none';
+    scrContainer.style.display = '';
+    movieContainer.style.display = "";
+    chooseTime.style.display = "";
+}
+
+
+
+
+///////////////////////////////
+// HANNIBAL ///
+//////////////////////////////
+
+//de her to url skal blive mere dynamiske, så 5 tallet ikke er hardcodet, men kommer fra simons side
+const urlScreening = "http://localhost:8080/api/v1/screenings";
+
+
+let screenings = [];
+
 
 //loader de to fetchmetoder, når man starter skitet
-document.addEventListener("DOMContentLoaded", ()=>{
-    scrContainer = document.querySelector(".screeningBoxContainer");
-    movieContainer = document.querySelector(".movieContainer");
-    fetchMovie();
-    fetchScreening();
-})
+
+
+
+// document.addEventListener("DOMContentLoaded", ()=>{
+//     scrContainer = document.querySelector(".screeningBoxContainer");
+//     movieContainer = document.querySelector(".movieContainer");
+//     fetchScreening();
+// })
 
 
 //laver en movie poster for den givne film, ens med NFBIO
@@ -34,7 +189,7 @@ function createMoviePoster(movie){
 
 
         const movieDetails = document.createElement("div");
-        movieDetails.className = "movieDetails";
+        movieDetails.className = "movieDetailsBook";
 
 
         const movieTitle = document.createElement("h1");
@@ -146,22 +301,14 @@ function createScreeningSchedule(screenings) {
 }
 
 
-async function fetchScreening(){
-    screenings = await fetchAnyUrl(urlScreening);
-    if(screenings){
+async function fetchScreening(movieId){
+    screenings = await fetchAnyUrl(urlScreening + "/" +  movieId);
+    if(screenings && screenings.length > 0){
         createScreeningSchedule(screenings);
-    } else {
-        alert("fejl ved kald til backend url=" + urlScreening + " vil du vide mere så kig i console")
-    }
-}
-
-
-async function fetchMovie(){
-    movie = await fetchAnyUrl(urlMovie);
-    if(movie){
+        const movie = screenings[0].movie;
         createMoviePoster(movie);
     } else {
-        alert("fejl ved kald til backend url=" + urlMovie + " vil du vide mere så kig i console")
+        alert("fejl ved kald til backend url=" + urlScreening + " vil du vide mere så kig i console")
     }
 }
 
