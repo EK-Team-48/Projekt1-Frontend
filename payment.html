@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/3277b84a7d.js" crossorigin="anonymous"></script>
     <title>Payment</title>
 </head>
 
@@ -22,27 +23,32 @@
                 <div class="grid-2">
                     <div class="input-box">
                         <label for="firstName">First name</label>
-                        <input type="text" name="firstName" placeholder="Insert First name">
+                        <input type="text" name="firstName" id="firstName" placeholder="Insert First name">
                     </div>
                     <div class="input-box">
                         <label for="lastName">Last name</label>
-                        <input type="text" name="lastName" placeholder="Insert Last name">
+                        <input type="text" name="lastName" id="lastName" placeholder="Insert Last name">
                     </div>
                 </div>
 
                 <div class="input-box">
                     <label for="number">Number</label>
-                    <input type="number" name="number" placeholder="Insert your number">
+                    <input type="number" name="number" id="number"placeholder="Insert your number">
                 </div>
 
                 <div class="input-box">
                     <label for="email">Email</label>
-                    <input type="email" name="email" placeholder="Insert your email">
+                    <input type="email" name="email" id="email" placeholder="Insert your email">
+                </div>
+
+                <div class="input-box">
+                    <label for="age"> Age </label>
+                    <input type="date" name="age" id="age">
                 </div>
 
                 <div class="input-box">
                     <label for="address">Address</label>
-                    <input type="text" name="address" placeholder="Street and number">
+                    <input type="text" id="address" name="address" placeholder="Street and number">
                 </div>
 
                 <div class="grid-2">
@@ -85,13 +91,12 @@
             </div>
 
             <div class="submit-box">
-                <button type="submit">Continue to checkout</button>
+                <button class="confirm-order" type="submit">Continue to checkout</button>
             </div>
         </form>
     </div>
 
-
-    <script src="app.js" defer></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 
 </html>
