@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchMovies() {
     try {
         allMovies = await fetchAnyUrl(`${API_BASE}/movies`);
+        console.log(allMovies);
         renderMovies(allMovies);
     } catch (err) {
         container.innerHTML = `${err.message}</p>`;
@@ -101,4 +102,59 @@ function closeMovieDetails() {
     modal.style.display = 'none';
 }
 
+async function loadGenres() {
+    try {
+        const response = await fetch("http://localhost:8080/api/v1/genres");
+        const res = await response.json();
+
+        const select = document.getElementById("genre");
+        select.innerHTML = '<option value=""> All Genres </option>';
+
+        for (const g of res) {
+            const option = document.createElement("option");
+            option.value = g.genre;
+            option.textContent = g.genre;
+            select.appendChild(option);
+        }
+    } catch (err) {
+        console.error("Kunne ikke hente genres:", err);
+    }
+}
+
+function filterMoviesByGenre(genre) {
+  if (!genre) {
+    renderMovies(allMovies);
+    return;
+  }
+
+  const filtered = allMovies.filter(movie =>
+    movie.genres.some(g => g.genre === genre)
+  );
+  renderMovies(filtered);
+}
+
+document.getElementById("genre").addEventListener("change", (e) => {
+  const selected = e.target.value;
+  filterMoviesByGenre(selected);
+});
+
+document.getElementById("search").addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase();
+  filterMoviesBySearch(query);
+});
+
+function filterMoviesBySearch(query) {
+  if (!query) {
+    renderMovies(allMovies);
+    return;
+  }
+
+  const filtered = allMovies.filter(movie =>
+    movie.movieTitle.toLowerCase().includes(query));
+
+  renderMovies(filtered);
+}
+
+
+loadGenres();
 window.closeMovieDetails = closeMovieDetails;
