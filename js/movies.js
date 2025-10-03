@@ -4,7 +4,8 @@ import { fetchAnyUrl } from './modulejson.js';
 const API_BASE = 'http://localhost:8080/api/v1';
 
 let allMovies = [];
-let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent;
+let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc;
+let bookButtonHandler = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     container = document.querySelector('.filmBoxContainer');
@@ -13,13 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
     genresEl = document.getElementById('genres');
     descEl = document.getElementById('movieDescription');
     trailerContainer = document.getElementById("trailerContainer");
-    movieDetailsContent = document.querySelector(".movieDetails-content")
+    movieDetailsContent = document.querySelector(".movieDetails-content");
+    abc = document.querySelector("#abc");
+
+    
 
     fetchMovies();
 
+
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMovieDetails(); });
     modal.addEventListener('click', e => { if (e.target === modal) closeMovieDetails(); });
+
 });
+
 
 async function fetchMovies() {
     try {
@@ -31,14 +38,14 @@ async function fetchMovies() {
     }
 }
 
-function renderMovies(list) {
+function renderMovies(allMovies) {
     container.innerHTML = '';
-    if (!list.length) {
+    if (!allMovies.length) {
         container.innerHTML = `<p>No movie found.</p>`;
         return;
     }
 
-    list.forEach(m => {
+    allMovies.forEach(m => {
         const box = document.createElement('div');
         box.className = 'filmBox';
         box.tabIndex = 0;
@@ -81,18 +88,26 @@ function openMovieDetails(movie) {
         alert("Invalid Link");
     }
 
-    const b = document.createElement('button');
-    b.className = 'book-btn';
-    b.textContent = "Book";
-    movieDetailsContent.appendChild(b);
+ 
+    
+    
 
-    /*
-    Hannibal din funktion skal ind i denne EventListener!! Så burde det gerne virke.
-    Husk at din funktion skal have en movie som parameter.
-     */
-    b.addEventListener("click", )
+    //håndter book knap, så den resetter hver gang vi trykker på en ny movie og sender movieobjektet videre.
+    if (bookButtonHandler) {
+        abc.removeEventListener('click', bookButtonHandler)
+    }
+
+    bookButtonHandler = () => testHanni(movie);
+
+    abc.addEventListener("click", bookButtonHandler);
 
     modal.style.display = 'flex';
+}
+
+//Hannis funktion
+function testHanni(movie) {
+    console.log(movie.movieId);
+    closeMovieDetails();
 }
 
 function getYouTubeId(trailerLink) {
