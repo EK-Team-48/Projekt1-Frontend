@@ -6,29 +6,6 @@ const createUser = document.querySelector(".checkout-form");
 const test = document.querySelector(".checkout-box")
 const checkoutButton = document.querySelector(".btn");
 const confirmOrder = document.querySelector(".confirm-order");
-console.log(confirmOrder);
-
-
-
-createUser?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const creds = Object.fromEntries(new FormData(createUser));
-    const userObj = {
-        firstName: creds.firstName,
-        lastName: creds.lastName,
-        age: creds.age,
-        number: creds.number
-    };
-
-    try {
-        const res = await postObjectAsJson(API_BASE, userObj, "POST");
-        if(!res.ok) {
-            alert("post virker ikke" + res.status);
-        }
-    }   catch (err) {
-        console.error(err);
-    }
-});
 
 checkoutButton?.addEventListener("click", (e) => {
   e.preventDefault();
@@ -41,14 +18,28 @@ function openPopUP() {
   checkoutButton.style.display = "none";
 }
 
-confirmOrder?.addEventListener("click", (e) => {
-    e.preventDefault();
-    test.classList.remove("active");
+confirmOrder?.addEventListener("click", async (e) => {
+  e.preventDefault();
 
-    const firstName = document.getElementById("firstName").value;
-    const lastName = document.getElementById("lastName").value;
-    const email = document.getElementById("email").value;
-    const number = document.getElementById("number").value;
+  const creds = Object.fromEntries(new FormData(createUser));
+  const userObj = {
+    firstName: creds.firstName,
+    lastName: creds.lastName,
+    age: creds.age,
+    number: creds.number
+  };
+
+  try {
+    const res = await postObjectAsJson(API_BASE, userObj, "POST");
+    if (!res.ok) {
+      alert("post virker ikke" + res.status);
+    } else {
+      test.classList.remove("active");
+
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const email = document.getElementById("email").value;
+      const number = document.getElementById("number").value;
 
       const confirmation = `
       <div class="confirmed-section">
@@ -67,10 +58,15 @@ confirmOrder?.addEventListener("click", (e) => {
     </div>
   `;
 
-  document.body.insertAdjacentHTML("beforeend", confirmation);
+      document.body.insertAdjacentHTML("beforeend", confirmation);
 
-  const orderConfirmed = document.querySelector(".confirmed-section");
-  orderConfirmed.classList.add("active");
+      const orderConfirmed = document.querySelector(".confirmed-section");
+      orderConfirmed.classList.add("active");
+
+    }
+  } catch (err) {
+    console.error(err);
+  }
 })
 
 
