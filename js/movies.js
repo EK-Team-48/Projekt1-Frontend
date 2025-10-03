@@ -4,7 +4,7 @@ import { fetchAnyUrl } from './modulejson.js';
 const API_BASE = 'http://localhost:8080/api/v1';
 
 let allMovies = [];
-let container, modal, titleEl, genresEl, descEl, trailerContainer;
+let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent;
 
 document.addEventListener('DOMContentLoaded', () => {
     container = document.querySelector('.filmBoxContainer');
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     genresEl = document.getElementById('genres');
     descEl = document.getElementById('movieDescription');
     trailerContainer = document.getElementById("trailerContainer");
+    movieDetailsContent = document.querySelector(".movieDetails-content")
 
     fetchMovies();
 
@@ -79,6 +80,17 @@ function openMovieDetails(movie) {
     } else {
         alert("Invalid Link");
     }
+
+    const b = document.createElement('button');
+    b.className = 'book-btn';
+    b.textContent = "Book";
+    movieDetailsContent.appendChild(b);
+
+    /*
+    Hannibal din funktion skal ind i denne EventListener!! Så burde det gerne virke.
+    Husk at din funktion skal have en movie som parameter.
+     */
+    b.addEventListener("click", )
 
     modal.style.display = 'flex';
 }
