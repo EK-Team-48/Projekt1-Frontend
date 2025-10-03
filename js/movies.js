@@ -133,6 +133,18 @@ async function loadGenres() {
     }
 }
 
+ 
+//Al Nedenstående javascript er til at filtrere film ud fra genre og søge ud fra deres navne
+document.getElementById("genre").addEventListener("change", (e) => {
+  const selected = e.target.value;
+  filterMoviesByGenre(selected);
+});
+
+document.getElementById("search").addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase();
+  filterMoviesBySearch(query);
+});
+
 function filterMoviesByGenre(genre) {
   if (!genre) {
     renderMovies(allMovies);
@@ -144,16 +156,6 @@ function filterMoviesByGenre(genre) {
   );
   renderMovies(filtered);
 }
-
-document.getElementById("genre").addEventListener("change", (e) => {
-  const selected = e.target.value;
-  filterMoviesByGenre(selected);
-});
-
-document.getElementById("search").addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase();
-  filterMoviesBySearch(query);
-});
 
 function filterMoviesBySearch(query) {
   if (!query) {
