@@ -210,11 +210,18 @@ window.closeMovieDetails = closeMovieDetails;
 
 //Seat Booking
 
-const selectedSeats = new Set();
+const selectedSeatsMap = new Map();
 
 function handleSeatClick() {
   const seatDiv = this;
   const seatId = seatDiv.dataset.seatId;
+
+  const seatData = {
+    seatId: seatId,
+    seatRow: seatDiv.dataset.seatRow,
+    seatNumber: seatDiv.dataset.seatNumber,
+    theaterId: seatDiv.dataset.theaterId
+  }
 
 
   seatDiv.classList.toggle('selected');
@@ -222,7 +229,8 @@ function handleSeatClick() {
 
 
   if(seatDiv.classList.contains('selected')) {
-    selectedSeats.add(seatId);
+    selectedSeatsMap.set(seatId, seatData);
+    console.log(selectedSeatsMap);
     ticketCounter++;
     priceCounter += 150;
     tickets.textContent = ticketCounter;
@@ -250,6 +258,7 @@ function handleConfirmClick() {
 async function renderSeatsByScreening() {
   const seatContainer = document.querySelector(".seatContainer");
   seats = await fetchAnyUrl(`${API_BASE}/seats/${1}`);
+  console.log(seats);
   bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
 
   const bookedSeatsIds = new Set(bookedSeats.map(seat => seat.seatId));
@@ -291,7 +300,11 @@ async function renderSeatsByScreening() {
     seatsInRow.forEach((seat) => {
       const el = document.createElement("div");
       el.innerHTML = seatSvg;
+
       el.dataset.seatId = seat.seatId;
+      el.dataset.seatRow = seat.seatRow;
+      el.dataset.seatNumber = seat.seatNumber;
+      el.dataset.theaterId = seat.theater.id;
 
       const isBooked = bookedSeatsIds.has(seat.seatId);
       if(isBooked) {
