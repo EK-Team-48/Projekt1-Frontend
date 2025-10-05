@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchMovies() {
     try {
         allMovies = await fetchAnyUrl(`${API_BASE}/movies`);
-        console.log(allMovies);
         renderMovies(allMovies);
     } catch (err) {
         container.innerHTML = `${err.message}</p>`;
@@ -219,7 +218,6 @@ function handleSeatClick() {
 
 
   seatDiv.classList.toggle('selected');
-  console.log("clicked" + seatDiv);
 
 
 
@@ -255,7 +253,6 @@ async function renderSeatsByScreening() {
   bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
 
   const bookedSeatsIds = new Set(bookedSeats.map(seat => seat.seatId));
-  console.log(bookedSeatsIds)
 
   if (!seats || !seats.length) {
     seatContainer.innerHTML = "<p>Ingen sæder.</p>";
