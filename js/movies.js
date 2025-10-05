@@ -207,7 +207,8 @@ window.closeMovieDetails = closeMovieDetails;
 
 async function renderSeatsByScreening() {
   const seatContainer = document.querySelector(".seatContainer");
-  const seats = await fetchAnyUrl(`${API_BASE}/seats/${1}`);
+  seats = await fetchAnyUrl(`${API_BASE}/seats/${1}`);
+  bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
 
   if (!seats || !seats.length) {
     seatContainer.innerHTML = "<p>Ingen sæder.</p>";
@@ -235,7 +236,7 @@ async function renderSeatsByScreening() {
     row.style.display = "grid";
     row.style.gridAutoFlow = "column";
     row.style.gridAutoColumns = "1fr";
-    row.style.gap = "6px";
+    row.style.gap = ".5em";
 
     // Find og sorter sæder i denne række
     const seatsInRow = seats
@@ -243,13 +244,14 @@ async function renderSeatsByScreening() {
       .sort((a, b) => Number(a.seatNumber) - Number(b.seatNumber));
 
     // Tilføj kun seat-elementer (ingen wrappers)
-    for (const seat of seatsInRow) {
+    seatsInRow.forEach((seat) => {
       const el = document.createElement("div");
       el.className = "seat";
       el.innerHTML = seatSvg;   // din eksisterende SVG
       el.dataset.seatId = seat.seatId; // behold dine felter, hvis du bruger dem
       row.appendChild(el);
-    }
+    })
+    
     seatContainer.appendChild(row);
 
     r++;
@@ -287,9 +289,3 @@ async function renderSeatsByScreening() {
 
 } */
     /* let bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`); */
-
-
-    function getTotalRowsBySeatList(seatlist) {
-        seatlist.for
-    }
-
