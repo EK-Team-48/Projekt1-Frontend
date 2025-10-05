@@ -6,8 +6,10 @@ const API_BASE = 'http://localhost:8080/api/v1';
 let allMovies = [];
 let seats;
 let bookedSeats;
-let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc;
+let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton;
 let bookButtonHandler = null;
+let ticketCounter = 0;
+let priceCounter = 0;
 
 const seatSvg = `<svg width="373" height="302" viewBox="0 0 373 302" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M59.6255 62.943C61.8735 27.1287 92.2795 0 128.164 0H244.496C280.524 0 310.983 27.3426 313.109 63.3074C315.642 106.136 315.478 142.505 312.758 185.141C310.614 218.737 283.726 245.44 250.12 247.418C204.942 250.078 167.264 250.032 122.613 247.39C89.1292 245.408 62.2622 218.906 60.004 185.44C57.0857 142.19 56.9444 105.656 59.6255 62.943Z" fill="#D9D9D9"/>
@@ -27,15 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
     trailerContainer = document.getElementById("trailerContainer");
     movieDetailsContent = document.querySelector(".movieDetails-content");
     abc = document.querySelector("#abc");
+    price = document.querySelector('#price');
+    tickets = document.querySelector('#tickets');
+    confirmButton = document.querySelector('.confirm-btn');
 
     
 
     fetchMovies();
     renderSeatsByScreening();
 
-
+    tickets.textContent = ticketCounter;
+    price.textContent = priceCounter;
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMovieDetails(); });
     modal.addEventListener('click', e => { if (e.target === modal) closeMovieDetails(); });
+    confirmButton.addEventListener('click', handleConfirmClick);
 
 });
 
@@ -204,11 +211,51 @@ window.closeMovieDetails = closeMovieDetails;
 
 //Seat Booking
 
+const selectedSeats = new Set();
+
+function handleSeatClick() {
+  const seatDiv = this;
+  const seatId = seatDiv.dataset.seatId;
+
+
+  seatDiv.classList.toggle('selected');
+  console.log("clicked" + seatDiv);
+
+
+
+  if(seatDiv.classList.contains('selected')) {
+    selectedSeats.add(seatId);
+    ticketCounter++;
+    priceCounter += 150;
+    tickets.textContent = ticketCounter;
+    price.textContent = priceCounter;
+
+
+  } else {
+    selectedSeats.delete(seatId);
+    ticketCounter --;
+    priceCounter -= 150;
+    tickets.textContent = ticketCounter;
+    price.textContent = priceCounter;
+
+
+
+  }
+
+}
+
+function handleConfirmClick() {
+  console.log(selectedSeats);
+}
+
 
 async function renderSeatsByScreening() {
   const seatContainer = document.querySelector(".seatContainer");
   seats = await fetchAnyUrl(`${API_BASE}/seats/${1}`);
   bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
+
+  const bookedSeatsIds = new Set(bookedSeats.map(seat => seat.seatId));
+  console.log(bookedSeatsIds)
 
   if (!seats || !seats.length) {
     seatContainer.innerHTML = "<p>Ingen sæder.</p>";
@@ -246,9 +293,18 @@ async function renderSeatsByScreening() {
     // Tilføj kun seat-elementer (ingen wrappers)
     seatsInRow.forEach((seat) => {
       const el = document.createElement("div");
-      el.className = "seat";
-      el.innerHTML = seatSvg;   // din eksisterende SVG
-      el.dataset.seatId = seat.seatId; // behold dine felter, hvis du bruger dem
+      el.innerHTML = seatSvg;
+      el.dataset.seatId = seat.seatId;
+
+      const isBooked = bookedSeatsIds.has(seat.seatId);
+      if(isBooked) {
+        el.className = "bookedSeat";
+      } else {
+        el.className = "seat";
+        el.addEventListener('click', handleSeatClick);
+      }
+
+
       row.appendChild(el);
     })
     
