@@ -4,9 +4,10 @@ import { fetchAnyUrl, postObjectAsJson } from './modulejson.js';
 const API_BASE = 'http://localhost:8080/api/v1';
 
 let allMovies = [];
+let screenings = [];
 let seats;
 let bookedSeats;
-let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton;
+let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton, scrContainer, movieContainer, chooseTime, background;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
@@ -32,6 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
     price = document.querySelector('#price');
     tickets = document.querySelector('#tickets');
     confirmButton = document.querySelector('.confirm-btn');
+
+    scrContainer = document.querySelector(".screeningBoxContainer");
+
+    movieContainer = document.querySelector(".movieContainer");
+
+    chooseTime = document.querySelector(".vælgSpilletid");
+
+    background = document.querySelector(".background");
+
 
     
 
@@ -120,12 +130,6 @@ function openMovieDetails(movie) {
     abc.addEventListener("click", bookButtonHandler);
 
     modal.style.display = 'flex';
-}
-
-//Hannis funktion
-function testHanni(movie) {
-    console.log(movie.movieId);
-    closeMovieDetails();
 }
 
 function getYouTubeId(trailerLink) {
@@ -378,3 +382,162 @@ async function renderSeatsByScreening(screeningId) {
 
 } */
     /* let bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`); */
+
+//Hannis funktion
+function testHanni(movie) {
+    closeMovieDetails();
+    displayScreenings();
+    fetchScreening(movie.movieId);
+}
+
+const urlScreening = API_BASE + "/screenings";
+
+function displayScreenings(){
+    background.style.display = 'none';
+    scrContainer.style.display = 'grid';
+    movieContainer.style.display = 'flex';
+    chooseTime.style.display = 'flex';
+}
+
+function createMoviePoster(movie){
+    movieContainer.innerHTML = "";
+    if (!movie || movie.length === 0) {
+        movieContainer.innerHTML = `<p>Could not find movie</p>`;
+        return;
+    }
+    const movieBox = document.createElement("div");
+    movieBox.className="movieBox";
+
+
+    const moviePoster = document.createElement('div');
+    moviePoster.className = 'moviePoster';
+    moviePoster.style.backgroundImage = `url("${movie.movieImg}")`;
+
+
+    const movieDetails = document.createElement("div");
+    movieDetails.className = "movieDetailsBook";
+
+
+    const movieTitle = document.createElement("h1");
+    movieTitle.className="movieTitle";
+    movieTitle.textContent = movie.movieTitle
+
+
+    const movieDesc = document.createElement("p");
+    movieDesc.className = "movieDesc";
+    movieDesc.textContent = movie.description;
+
+
+    const ageRating = document.createElement("p");
+    ageRating.className ="ageRating";
+    ageRating.textContent = movie.ageLimit.ageRating;
+
+
+    const genreList = document.createElement("P");
+    genreList.className = "genreList";
+    genreList.textContent = movie.genres.map(g => g.genre).join(", ");
+
+
+    movieDetails.appendChild(movieTitle);
+    movieDetails.appendChild(movieDesc);
+    movieDetails.appendChild(ageRating);
+    movieDetails.appendChild(genreList);
+
+    movieBox.appendChild(moviePoster);
+    movieBox.appendChild(movieDetails);
+
+    movieContainer.appendChild(movieBox);
+
+}
+
+function createScreeningSchedule(screenings) {
+    scrContainer.innerHTML = "";
+
+    if (!screenings || screenings.length === 0) {
+        scrContainer.innerHTML = `<p>No times available</p>`;
+        return;
+    }
+
+    //Gruppere screening via date
+    const screeningsByDate = screenings.reduce((acc, screening) => {
+        const date = screening.screeningDate;
+        if (!acc[date]) acc[date] = [];
+        acc[date].push(screening);
+        return acc;
+    }, {});
+
+    //Sortere dates ud fra ældst først
+    const sortedDates = Object.keys(screeningsByDate).sort(
+        (a, b) => new Date(a) - new Date(b)
+    );
+
+    //Opretter en screening box for alle screenings
+    sortedDates.forEach(date => {
+        const screeningsForDate = screeningsByDate[date];
+
+        const srcBox = document.createElement("div");
+        srcBox.className = "screeningBox";
+
+        const srcDate = document.createElement("time");
+        srcDate.textContent = new Date(date).toLocaleDateString("da-DK", {
+            weekday: "long",
+            day: "numeric",
+            month: "long"
+        });
+        srcBox.appendChild(srcDate);
+
+        const boxForTimes = document.createElement("div");
+        boxForTimes.className = "boxForTimes";
+
+        screeningsForDate.forEach(s => {
+            const timeBox = document.createElement("a");
+            timeBox.className = "timeBox";
+
+            const theater = document.createElement("p");
+            theater.className = "theaterName";
+            //theater.textContent = s.theaterName; Lige nu er den hardcoded, fordi jeg ikke får theater med API
+            theater.textContent = "sal 1"
+
+            const time = document.createElement("p");
+            time.className = "startTime";
+
+            //format time fra 1200 -> 12.00
+
+            let formatTime =  (s.startTime / 100).toFixed(2);
+
+            time.textContent = formatTime;
+
+            timeBox.addEventListener("click", () => {
+                //her tænker jeg at næste view bliver trigget?
+                //Brug s som parameter for at få screening objektet med, fx:
+                //     vic's Function(s)
+
+            })
+
+            timeBox.appendChild(theater);
+            timeBox.appendChild(time);
+            boxForTimes.appendChild(timeBox);
+        });
+
+        srcBox.appendChild(boxForTimes);
+        scrContainer.appendChild(srcBox);
+    });
+}
+
+async function fetchScreening(movieId){
+    screenings = await fetchAnyUrl(urlScreening + "/" +  movieId);
+    try {
+        if(screenings && screenings.length > 0){
+            createScreeningSchedule(screenings);
+            const movie = screenings[0].movie;
+            createMoviePoster(movie);
+        } else {
+            movieContainer.innerHTML = "";
+            chooseTime.style.display = "none";
+            scrContainer.innerHTML = `<p style="color: white"> No screenings for this movie at the time</p>`;
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+}

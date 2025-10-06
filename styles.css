@@ -365,7 +365,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .seatFrame {
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -485,4 +485,218 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .price {
   display: flex;
+}
+
+/* Container holding all the day boxes */
+.screeningBoxContainer {
+  display: none;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2.5rem; /* increased gap between days */
+  justify-items: stretch;
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+}
+
+/* Each day box */
+.screeningBox {
+  background: #222C3C;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease;
+  width: 100%;
+  margin-bottom: 1.5rem; /* extra space between rows if needed */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.screeningBox:hover {
+  transform: translateY(-4px);
+}
+
+/* Date at the top of the day box */
+.screeningBox time {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #E6EAF0; /* light text */
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #9AA5B1; /* light border */
+  padding-bottom: 0.5rem;
+}
+
+/* Container for all time/theater boxes in a day */
+.boxForTimes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+/* Individual theater/time boxes (green squares) */
+.timeBox {
+  background-color: #1FA45B; /* green square */
+  color: #fff;
+  padding: 0.6rem 0.6rem;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px; /* slightly rounded corners */
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.timeBox:hover {
+  background-color: #159046;
+  transform: scale(1.05);
+}
+
+/* Theater name inside timeBox */
+.theaterName {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Start time inside timeBox */
+.startTime {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .screeningBoxContainer {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .timeBox {
+    width: 60px;
+    height: 60px;
+    font-size: 0.85rem;
+  }
+}
+
+
+
+
+
+.vælgSpilletid {
+  display: none;
+  font-size: 2rem; /* make it bigger */
+  font-weight: 700; /* bold */
+  color: var(--text-secondary); /* use your theme color */
+  text-align: center; /* center it */
+  margin: 2rem 0 1rem 0; /* spacing above and below */
+  letter-spacing: 1px; /* a little spacing between letters */
+  border-bottom: 2px solid #27ae60; /* subtle green underline */
+  padding-bottom: 0.5rem; /* space between text and underline */
+}
+
+
+/* ---------------- Movie Container Fix ---------------- */
+.movieContainer {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 3rem auto; /* added bottom margin to push screenings down */
+  position: relative; /* ensure normal flow */
+  z-index: 1; /* keep it above background but below absolute elements if any */
+}
+
+.movieBox {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--background-tertiary);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  overflow: hidden;
+  width: 100%;
+  gap: 1.5rem;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 2rem; /* space between movie and screenings */
+}
+
+/* Poster */
+.moviePoster {
+  flex: 0 0 200px;
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px 0 0 12px;
+}
+
+/* Movie Details inside the movie box */
+.movieDetailsBook {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* center title + description vertically */
+  padding: 1rem;
+  flex: 1; /* take remaining space */
+  position: static;
+  z-index: auto;
+  background: linear-gradient(180deg, #19222F 0%, #222C3C 100%); /* theme gradient */
+  border-radius: 12px; /* rounded corners like your boxes */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); /* subtle shadow */
+  color: var(--text-secondary); /* text color from theme */
+}
+
+
+
+/* Title, Description, Ratings */
+.movieTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.movieDesc {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin-bottom: 0.8rem;
+}
+
+.ageRating {
+  font-weight: 700;
+  color: #27ae60;
+  margin-bottom: 0.5rem;
+}
+
+.genreList {
+  font-style: italic;
+  color: #a0d2eb;
+}
+
+/* Responsive: Stack poster + details */
+@media (max-width: 900px) {
+  .movieBox {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .moviePoster {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .movieDetails {
+    width: 100%;
+    padding: 1rem;
+    align-items: center;
+  }
 }
