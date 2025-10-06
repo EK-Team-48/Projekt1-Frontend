@@ -241,7 +241,7 @@ function handleSeatClick(screeningId) {
 
 
   } else {
-    selectedSeats.delete(seatId);
+    selectedSeatsMap.delete(seatId);
     ticketCounter --;
     priceCounter -= 150;
     tickets.textContent = ticketCounter;
@@ -263,9 +263,10 @@ async function handleConfirmClick() {
 
   const bookingPayload = {
     screeningId: 1,
-    seats: seatsToBook,
-    totalPrice: priceCounter
+    seatIds: seatsToBook.map(seat => seat.seatId),
   };
+
+  console.log(bookingPayload);
 
   try {
     const response = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
@@ -273,7 +274,6 @@ async function handleConfirmClick() {
     console.error(e);
   }
 
-  console.log(selectedSeats);
 }
 
 
