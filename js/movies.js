@@ -7,10 +7,11 @@ let allMovies = [];
 let screenings = [];
 let seats;
 let bookedSeats;
-let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton, scrContainer, movieContainer, chooseTime, background;
+let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton, scrContainer, movieContainer, chooseTime, background, genre, search;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
+const urlScreening = API_BASE + "/screenings";
 
 const seatSvg = `<svg width="373" height="302" viewBox="0 0 373 302" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M59.6255 62.943C61.8735 27.1287 92.2795 0 128.164 0H244.496C280.524 0 310.983 27.3426 313.109 63.3074C315.642 106.136 315.478 142.505 312.758 185.141C310.614 218.737 283.726 245.44 250.12 247.418C204.942 250.078 167.264 250.032 122.613 247.39C89.1292 245.408 62.2622 218.906 60.004 185.44C57.0857 142.19 56.9444 105.656 59.6255 62.943Z" fill="#D9D9D9"/>
@@ -33,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     price = document.querySelector('#price');
     tickets = document.querySelector('#tickets');
     confirmButton = document.querySelector('.confirm-btn');
+    genre = document.querySelector('#genre');
+    search = document.querySelector('#search');
 
     scrContainer = document.querySelector(".screeningBoxContainer");
 
@@ -47,12 +50,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchMovies();
     renderSeatsByScreening();
+    loadGenres();
+    window.closeMovieDetails = closeMovieDetails;
 
     tickets.textContent = ticketCounter;
     price.textContent = priceCounter;
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMovieDetails(); });
     modal.addEventListener('click', e => { if (e.target === modal) closeMovieDetails(); });
     confirmButton.addEventListener('click', handleConfirmClick);
+    genre.addEventListener("change", (e) => {
+      const selected = e.target.value;
+      filterMoviesByGenre(selected);
+    });
+    search.addEventListener("input", (e) => {
+      const query = e.target.value.toLowerCase();
+      filterMoviesBySearch(query);
+    });
 
 });
 
@@ -116,10 +129,6 @@ function openMovieDetails(movie) {
         alert("Invalid Link");
     }
 
- 
-    
-    
-
     //håndter book knap, så den resetter hver gang vi trykker på en ny movie og sender movieobjektet videre.
     if (bookButtonHandler) {
         abc.removeEventListener('click', bookButtonHandler)
@@ -170,18 +179,6 @@ async function loadGenres() {
     }
 }
 
- 
-//Al Nedenstående javascript er til at filtrere film ud fra genre og søge ud fra deres navne
-document.getElementById("genre").addEventListener("change", (e) => {
-  const selected = e.target.value;
-  filterMoviesByGenre(selected);
-});
-
-document.getElementById("search").addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase();
-  filterMoviesBySearch(query);
-});
-
 function filterMoviesByGenre(genre) {
   if (!genre) {
     renderMovies(allMovies);
@@ -207,8 +204,7 @@ function filterMoviesBySearch(query) {
 }
 
 
-loadGenres();
-window.closeMovieDetails = closeMovieDetails;
+
 
 
 
@@ -374,36 +370,6 @@ async function renderSeatsByScreening(screeningId) {
 }
 
 
-/* async function renderSeatsByScreening() {
-    const seatContainer = document.querySelector('.seatContainer');
-
-    seats = await fetchAnyUrl(`${API_BASE}/seats/${2}`);
-
-    //Sæt rækker baseret på theaterId
-    
-        
-        seatContainer.style.gridTemplateColumns = 'repeat(10, 1fr)';
-        for (let i = 1; i < 9; i++) {
-            const seatRow = document.createElement('div');
-            seatRow.setAttribute('id', i);
-            seatRow.className = 'seatRow';
-            seatRow.style.gridTemplateColumns = 'repeat(10, 1fr)';
-            seatContainer.appendChild(seatRow);
-
-            seats.forEach((seat) => {
-                if(seat.seatRow == i) {
-                    const seatElement = document.createElement('div');
-                    seatElement.innerHTML = seatSvg;        
-                    seatElement.className = 'seat';
-                    seatRow.appendChild(seatElement);
-                }
-            
-             });
-        }
-
-} */
-    /* let bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`); */
-
 //Hannis funktion
 function testHanni(movie) {
     closeMovieDetails();
@@ -411,7 +377,7 @@ function testHanni(movie) {
     fetchScreening(movie.movieId);
 }
 
-const urlScreening = API_BASE + "/screenings";
+
 
 function displayScreenings(){
     background.style.display = 'none';
