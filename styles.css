@@ -661,28 +661,6 @@ input[type="number"]::-webkit-outer-spin-button {
   color: #a0d2eb;
 }
 
-
-/* Responsive: Stack poster + details */
-@media (max-width: 900px) {
-  .movieBox {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .moviePoster {
-    width: 100%;
-    height: 300px;
-    border-radius: 12px 12px 0 0;
-  }
-
-  .movieDetails {
-    width: 100%;
-    padding: 1rem;
-    align-items: center;
-  }
-}
-
 .login-container {
   position: absolute;
   top: 50%;
