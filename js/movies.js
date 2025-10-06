@@ -266,12 +266,33 @@ async function handleConfirmClick() {
     seatIds: seatsToBook.map(seat => seat.seatId),
   };
 
+  const BOOKING_API_URL = `${API_BASE}/bookedseats`;
+
+
+
   console.log(bookingPayload);
 
   try {
-    const response = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
+    console.log("Attempting to book seats with payload:", bookingPayload);
+
+    const response = await postObjectAsJson(
+      BOOKING_API_URL,
+      bookingPayload,
+      'POST'
+    )
+
+    if(response.ok) {
+      const result = await response.json();
+      selectedSeatsMap.clear();
+    } else {
+      const errorText = await response.text();
+      console.error("Booking failed:", response.status, errorText);
+      alert(`Booking failed. Status: ${response.status}`);
+    }
+
   } catch(e) {
-    console.error(e);
+    console.error("Error during post operation:", e);
+        alert("An unexpected error occurred.");
   }
 
 }
