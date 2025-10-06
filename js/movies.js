@@ -7,7 +7,7 @@ let allMovies = [];
 let screenings = [];
 let seats;
 let bookedSeats;
-let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton, scrContainer, movieContainer, chooseTime, background, genre, search;
+let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton, scrContainer, movieContainer, chooseTime, background, genre, search;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
@@ -25,6 +25,7 @@ const seatSvg = `<svg width="373" height="302" viewBox="0 0 373 302" fill="none"
 document.addEventListener('DOMContentLoaded', () => {
     container = document.querySelector('.filmBoxContainer');
     modal = document.getElementById('movieDetails');
+    modal2 = document.querySelector('.seatFrame');
     titleEl = document.getElementById('movieTitle');
     genresEl = document.getElementById('genres');
     descEl = document.getElementById('movieDescription');
@@ -51,12 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchMovies();
     renderSeatsByScreening();
     loadGenres();
-    window.closeMovieDetails = closeMovieDetails;
+    window.closeView = closeView;
 
     tickets.textContent = ticketCounter;
     price.textContent = priceCounter;
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMovieDetails(); });
-    modal.addEventListener('click', e => { if (e.target === modal) closeMovieDetails(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeView(); });
+    modal.addEventListener('click', e => { if (e.target === modal) closeView(); });
+    modal2.addEventListener('click', e => { if (e.target === modal2) closeView(); });
     confirmButton.addEventListener('click', handleConfirmClick);
     genre.addEventListener("change", (e) => {
       const selected = e.target.value;
@@ -156,8 +158,10 @@ function getYouTubeId(trailerLink) {
     return videoId;
 }
 
-function closeMovieDetails() {
+function closeView() {
     modal.style.display = 'none';
+    modal2.style.display = 'none';
+    modal3.style.display = 'none';
 }
 
 async function loadGenres() {
@@ -372,7 +376,7 @@ async function renderSeatsByScreening(screeningId) {
 
 //Hannis funktion
 function testHanni(movie) {
-    closeMovieDetails();
+    closeView();
     displayScreenings();
     fetchScreening(movie.movieId);
 }
