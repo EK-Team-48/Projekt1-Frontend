@@ -1,5 +1,6 @@
 import { postObjectAsJson } from './modulejson.js';
 const API_BASE = 'http://localhost:8080/api/v1/customer';
+const API_RES = 'http://localhost:8080/api/v1/reservations'
 
 
 const createUser = document.querySelector(".checkout-form");
@@ -34,6 +35,19 @@ confirmOrder?.addEventListener("click", async (e) => {
     if (!res.ok) {
       alert("post virker ikke" + res.status);
     } else {
+      const response = await res.json();
+      const reservationObj = {
+        customerID: response.customerId,
+        screeningID: 1 //afventer at modtage, så tester med 1
+      }
+      console.log(reservationObj);
+      const reservation = await postObjectAsJson(API_RES, reservationObj, "POST")
+      if(!reservation.ok) {
+        alert("Fejl i at sende info" + res.status);
+      }
+      
+      const status = await reservation.text();
+      console.log(status);
       test.classList.remove("active");
 
       const firstName = document.getElementById("firstName").value;
