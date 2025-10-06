@@ -1,5 +1,5 @@
 // app.js
-import { fetchAnyUrl } from './modulejson.js';
+import { fetchAnyUrl, postObjectAsJson } from './modulejson.js';
 
 const API_BASE = 'http://localhost:8080/api/v1';
 
@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchMovies() {
     try {
         allMovies = await fetchAnyUrl(`${API_BASE}/movies`);
-        console.log(allMovies);
         renderMovies(allMovies);
     } catch (err) {
         container.innerHTML = `${err.message}</p>`;
@@ -211,20 +210,30 @@ window.closeMovieDetails = closeMovieDetails;
 
 //Seat Booking
 
-const selectedSeats = new Set();
+const selectedSeatsMap = new Map();
 
-function handleSeatClick() {
+function handleSeatClick(screeningId) {
   const seatDiv = this;
   const seatId = seatDiv.dataset.seatId;
 
+  const seatData = {
+    seatId: seatId,
+    seatRow: seatDiv.dataset.seatRow,
+    seatNumber: seatDiv.dataset.seatNumber,
+    theater: {
+      id: seatDiv.dataset.theaterId,
+      theaterName: seatDiv.dataset.theaterName
+    }
+  };
+
 
   seatDiv.classList.toggle('selected');
-  console.log("clicked" + seatDiv);
 
 
 
   if(seatDiv.classList.contains('selected')) {
-    selectedSeats.add(seatId);
+    selectedSeatsMap.set(seatId, seatData);
+    console.log(selectedSeatsMap);
     ticketCounter++;
     priceCounter += 150;
     tickets.textContent = ticketCounter;
@@ -244,18 +253,37 @@ function handleSeatClick() {
 
 }
 
-function handleConfirmClick() {
+async function handleConfirmClick() {
+  const seatsToBook = Array.from(selectedSeatsMap.values());
+
+  if (seatsToBook.length === 0) {
+    alert("Vælg venligst sæder inden du booker");
+    return;
+  }
+
+  const bookingPayload = {
+    screeningId: 1,
+    seats: seatsToBook,
+    totalPrice: priceCounter
+  };
+
+  try {
+    const response = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
+  } catch(e) {
+    console.error(e);
+  }
+
   console.log(selectedSeats);
 }
 
 
-async function renderSeatsByScreening() {
+async function renderSeatsByScreening(screeningId) {
   const seatContainer = document.querySelector(".seatContainer");
   seats = await fetchAnyUrl(`${API_BASE}/seats/${1}`);
+  console.log(seats);
   bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
 
   const bookedSeatsIds = new Set(bookedSeats.map(seat => seat.seatId));
-  console.log(bookedSeatsIds)
 
   if (!seats || !seats.length) {
     seatContainer.innerHTML = "<p>Ingen sæder.</p>";
@@ -294,7 +322,12 @@ async function renderSeatsByScreening() {
     seatsInRow.forEach((seat) => {
       const el = document.createElement("div");
       el.innerHTML = seatSvg;
+
       el.dataset.seatId = seat.seatId;
+      el.dataset.seatRow = seat.seatRow;
+      el.dataset.seatNumber = seat.seatNumber;
+      el.dataset.theaterId = seat.theater.id;
+      el.dataset.theaterName = seat.theater.theaterName;
 
       const isBooked = bookedSeatsIds.has(seat.seatId);
       if(isBooked) {
