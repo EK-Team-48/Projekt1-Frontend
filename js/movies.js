@@ -7,7 +7,7 @@ let allMovies = [];
 let screenings = [];
 let seats;
 let bookedSeats;
-let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, timeSelectionFrame, timeSelectionFrameContent, movieDetailsContent, bookBtn, price, tickets, confirmButton, scrContainer, movieContainer, background, genre, search;
+let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, bookBtn, price, tickets, confirmButton, scrContainer, movieContainer, background, genre, search;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     search = document.querySelector('#search');
     timeSelectionFrame = document.querySelector('.timeSelectionFrame');
     timeSelectionFrameContent = document.querySelector('.timeSelectionFrameContent');
+    timeColumnContainer = document.querySelector('.timeColumnContainer');
 
     scrContainer = document.querySelector(".screeningBoxContainer");
 
@@ -164,7 +165,6 @@ function closeView() {
     modal.style.display = 'none';
     modal2.style.display = 'none';
     timeSelectionFrame.style.display = 'none';
-    
 }
 
 async function loadGenres() {
@@ -393,6 +393,7 @@ function displayScreenings(){
 }
 
 function createMoviePoster(movie){
+    movieContainer.innerHTML = ''; 
     if (!movie || movie.length === 0) {
         alert("couldnt find movie");
         return;
@@ -426,11 +427,16 @@ function createMoviePoster(movie){
 }
 
 function createScreeningSchedule(screenings) {
+    if(timeColumnContainer) timeColumnContainer.innerHTML = ''; 
+
     if (!screenings || screenings.length === 0) {
         const warning = document.createElement('h3');
         warning.innerHTML = "No times available";
+        timeColumnContainer.appendChild(warning);
         return;
+
     }
+
 
     //Gruppere screening via date
     const screeningsByDate = screenings.reduce((acc, screening) => {
@@ -454,7 +460,7 @@ function createScreeningSchedule(screenings) {
         
         const timeColumn = document.createElement('div');
         timeColumn.className = 'timeColumn';
-        timeSelectionFrameContent.appendChild(timeColumn);
+        timeColumnContainer.appendChild(timeColumn);
         
 
         const time = document.createElement("time");
@@ -508,11 +514,10 @@ async function fetchScreening(movieId){
 
     try {
         if(screenings && screenings.length > 0){
-            console.log(screenings);
             const movie = screenings[0].movie;
-            console.log(movie);
-            createMoviePoster(movie);
             createScreeningSchedule(screenings);
+            createMoviePoster(movie);
+            console.log(screenings)
 
         }
     } catch (err) {
