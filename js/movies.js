@@ -376,15 +376,15 @@ async function renderSeatsByScreening(screeningId) {
 
 //Hannis funktion
 function testHanni(movie) {
-    closeView();
     displayScreenings();
     fetchScreening(movie.movieId);
+    closeView();
+
 }
 
 
 
 function displayScreenings(){
-    background.style.display = 'none';
     scrContainer.style.display = 'grid';
     movieContainer.style.display = 'flex';
     chooseTime.style.display = 'flex';
