@@ -12,6 +12,15 @@ let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
 const urlScreening = API_BASE + "/screenings";
+const API_CUSTOMER = 'http://localhost:8080/api/v1/customer';
+const API_RESERVATION = 'http://localhost:8080/api/v1/reservations'
+
+
+const createUser = document.querySelector(".checkout-form");
+const test = document.querySelector(".checkout-box")
+const checkoutButton = document.querySelector(".btn");
+const confirmOrder = document.querySelector(".confirm-order");
+const seatsContainer = document.querySelector(".seatFrame");
 
 const seatSvg = `<svg width="373" height="302" viewBox="0 0 373 302" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M59.6255 62.943C61.8735 27.1287 92.2795 0 128.164 0H244.496C280.524 0 310.983 27.3426 313.109 63.3074C315.642 106.136 315.478 142.505 312.758 185.141C310.614 218.737 283.726 245.44 250.12 247.418C204.942 250.078 167.264 250.032 122.613 247.39C89.1292 245.408 62.2622 218.906 60.004 185.44C57.0857 142.19 56.9444 105.656 59.6255 62.943Z" fill="#D9D9D9"/>
@@ -260,6 +269,12 @@ function handleSeatClick(screeningId) {
 
 }
 
+function openPopUP() {
+  if (!test) return;
+  test.classList.add("active");
+  seatsContainer.style.display = "none";
+}
+
 async function handleConfirmClick() {
   const seatsToBook = Array.from(selectedSeatsMap.values());
 
@@ -268,40 +283,7 @@ async function handleConfirmClick() {
     return;
   }
 
-  const bookingPayload = {
-    screeningId: 1,
-    seatIds: seatsToBook.map(seat => seat.seatId),
-  };
-
-  const BOOKING_API_URL = `${API_BASE}/bookedseats`;
-
-
-
-  console.log(bookingPayload);
-
-  try {
-    console.log("Attempting to book seats with payload:", bookingPayload);
-
-    const response = await postObjectAsJson(
-      BOOKING_API_URL,
-      bookingPayload,
-      'POST'
-    )
-
-    if(response.ok) {
-      const result = await response.json();
-      selectedSeatsMap.clear();
-    } else {
-      const errorText = await response.text();
-      console.error("Booking failed:", response.status, errorText);
-      alert(`Booking failed. Status: ${response.status}`);
-    }
-
-  } catch(e) {
-    console.error("Error during post operation:", e);
-        alert("An unexpected error occurred.");
-  }
-
+  openPopUP();
 }
 
 
@@ -525,3 +507,100 @@ async function fetchScreening(movieId){
     }
 
 }
+
+
+confirmOrder?.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const seatsToBook = Array.from(selectedSeatsMap.values());
+  const seatIds = seatsToBook.map(seat => seat.seatId);
+
+  const creds = Object.fromEntries(new FormData(createUser));
+  const userObj = {
+    firstName: creds.firstName,
+    lastName: creds.lastName,
+    age: creds.age,
+    number: creds.number
+  };
+
+  try {
+    const res = await postObjectAsJson(API_CUSTOMER, userObj, "POST");
+    if(!res.ok) {
+      alert("post virker ikke " + res.status);
+      return;
+    }
+
+    const response = await res.json();
+
+        const reservationObj = {
+        customerID: response.customerId,
+        screeningID: 1, //afventer at modtage, så tester med 1
+        seatId: seatIds
+      };
+
+      const reservation = await postObjectAsJson(API_RESERVATION, reservationObj, "POST");
+      if(!reservation.ok) {
+        alert("Fejl i at sende info" + res.status);
+        return;
+      }
+
+
+      const bookingPayload = {
+        screeningId: 1,
+        seatIds: seatIds
+      };
+
+    console.log(seatIds);
+
+    const seatBookingResponse = await postObjectAsJson(`${API_BASE}/bookedseats`,bookingPayload,"POST");      
+    if(!seatBookingResponse.ok) {
+      alert("Seat booking failed");
+      return;
+    }
+    const seatsInfo = Array.from(selectedSeatsMap.values())
+    const seatDetails = seatsInfo.map(seat => `Row: ${seat.seatRow}, Seat: ${seat.seatNumber}`).join(" | ");
+    const theaterName = seatsInfo[0]?.theater.theaterName || 'Unknown Theater';
+
+
+    selectedSeatsMap.clear();
+    test.classList.remove("active");
+
+
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const email = document.getElementById("email").value;
+      const number = document.getElementById("number").value;
+
+      const confirmation = `
+      <div class="confirmed-section">
+    <div class="confirmed-box">
+      <h1>Order confirmation</h1>
+      <div class="confirmed-text"><i class="fa-solid fa-check"></i></div>
+      <div class="confirmed-text"><p>Your order has been confirmed</p></div>
+      <div class="confirmed-text"><p class="customer-name">Name: ${firstName} ${lastName}</p></div>
+      <div class="confirmed-text"><p class="customer-email">Email: ${email}</p></div>
+      <div class="confirmed-text"><p class="customer-number">Number: ${number}</p></div>
+      <div class="confirmed-text"><p class="customer-theater">Theater: ${theaterName}</p></div>
+      <div class="confirmed-text"><p class="customer-movie">Movie: Dune</p></div>
+      <div class="confirmed-text"><time datetime="2025-01-01">Date and time: 01/01/2025 11.00</time></div>
+      <div class="confirmed-text"><p class="customer-seats">Seat: ${seatDetails}</p></div>
+    </div>
+    </div>
+  `;
+
+      document.body.insertAdjacentHTML("beforeend", confirmation);
+
+      const orderConfirmed = document.querySelector(".confirmed-section");
+      orderConfirmed.classList.add("active");
+
+  } catch (err) {
+    console.error(err);
+  }
+
+});
+
+
+
+
+
+
