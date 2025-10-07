@@ -7,7 +7,7 @@ let allMovies = [];
 let screenings = [];
 let seats;
 let bookedSeats;
-let container, modal, titleEl, genresEl, descEl, trailerContainer, movieDetailsContent, abc, price, tickets, confirmButton, scrContainer, movieContainer, chooseTime, background, genre, search;
+let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, bookBtn, price, tickets, confirmButton, scrContainer, movieContainer, background, genre, search;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
@@ -34,23 +34,25 @@ const seatSvg = `<svg width="373" height="302" viewBox="0 0 373 302" fill="none"
 document.addEventListener('DOMContentLoaded', () => {
     container = document.querySelector('.filmBoxContainer');
     modal = document.getElementById('movieDetails');
+    modal2 = document.querySelector('.seatFrame');
     titleEl = document.getElementById('movieTitle');
     genresEl = document.getElementById('genres');
     descEl = document.getElementById('movieDescription');
     trailerContainer = document.getElementById("trailerContainer");
     movieDetailsContent = document.querySelector(".movieDetails-content");
-    abc = document.querySelector("#abc");
+    bookBtn = document.querySelector("#book-btn");
     price = document.querySelector('#price');
     tickets = document.querySelector('#tickets');
     confirmButton = document.querySelector('.confirm-btn');
     genre = document.querySelector('#genre');
     search = document.querySelector('#search');
+    timeSelectionFrame = document.querySelector('.timeSelectionFrame');
+    timeSelectionFrameContent = document.querySelector('.timeSelectionFrameContent');
+    timeColumnContainer = document.querySelector('.timeColumnContainer');
 
     scrContainer = document.querySelector(".screeningBoxContainer");
 
     movieContainer = document.querySelector(".movieContainer");
-
-    chooseTime = document.querySelector(".vælgSpilletid");
 
     background = document.querySelector(".background");
 
@@ -60,12 +62,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchMovies();
     renderSeatsByScreening();
     loadGenres();
-    window.closeMovieDetails = closeMovieDetails;
+    window.closeView = closeView;
 
     tickets.textContent = ticketCounter;
     price.textContent = priceCounter;
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMovieDetails(); });
-    modal.addEventListener('click', e => { if (e.target === modal) closeMovieDetails(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeView(); });
+    modal.addEventListener('click', e => { if (e.target === modal) closeView(); });
+    modal2.addEventListener('click', e => { if (e.target === modal2) closeView(); });
+    timeSelectionFrame.addEventListener('click', e => { if (e.target === timeSelectionFrame) closeView(); });
     confirmButton.addEventListener('click', handleConfirmClick);
     genre.addEventListener("change", (e) => {
       const selected = e.target.value;
@@ -140,14 +144,15 @@ function openMovieDetails(movie) {
 
     //håndter book knap, så den resetter hver gang vi trykker på en ny movie og sender movieobjektet videre.
     if (bookButtonHandler) {
-        abc.removeEventListener('click', bookButtonHandler)
+        bookBtn.removeEventListener('click', bookButtonHandler)
     }
 
     bookButtonHandler = () => testHanni(movie);
 
-    abc.addEventListener("click", bookButtonHandler);
+    bookBtn.addEventListener("click", bookButtonHandler);
 
     modal.style.display = 'flex';
+  
 }
 
 function getYouTubeId(trailerLink) {
@@ -165,8 +170,10 @@ function getYouTubeId(trailerLink) {
     return videoId;
 }
 
-function closeMovieDetails() {
+function closeView() {
     modal.style.display = 'none';
+    modal2.style.display = 'none';
+    timeSelectionFrame.style.display = 'none';
 }
 
 async function loadGenres() {
@@ -354,78 +361,64 @@ async function renderSeatsByScreening(screeningId) {
 
 //Hannis funktion
 function testHanni(movie) {
-    closeMovieDetails();
-    displayScreenings();
     fetchScreening(movie.movieId);
+    closeView();
+    displayScreenings()
+
+
 }
 
 
 
 function displayScreenings(){
-    background.style.display = 'none';
-    scrContainer.style.display = 'grid';
-    movieContainer.style.display = 'flex';
-    chooseTime.style.display = 'flex';
+    timeSelectionFrame.style.display = "flex";
 }
 
 function createMoviePoster(movie){
-    movieContainer.innerHTML = "";
+    movieContainer.innerHTML = ''; 
     if (!movie || movie.length === 0) {
-        movieContainer.innerHTML = `<p>Could not find movie</p>`;
+        alert("couldnt find movie");
         return;
     }
-    const movieBox = document.createElement("div");
-    movieBox.className="movieBox";
-
+    
 
     const moviePoster = document.createElement('div');
-    moviePoster.className = 'moviePoster';
+    moviePoster.className = 'filmBox__poster';
     moviePoster.style.backgroundImage = `url("${movie.movieImg}")`;
-
-
-    const movieDetails = document.createElement("div");
-    movieDetails.className = "movieDetailsBook";
+    console.log(`url("${movie.movieImg}")`)
 
 
     const movieTitle = document.createElement("h1");
     movieTitle.className="movieTitle";
     movieTitle.textContent = movie.movieTitle
 
-
-    const movieDesc = document.createElement("p");
-    movieDesc.className = "movieDesc";
-    movieDesc.textContent = movie.description;
-
-
     const ageRating = document.createElement("p");
     ageRating.className ="ageRating";
     ageRating.textContent = movie.ageLimit.ageRating;
-
 
     const genreList = document.createElement("P");
     genreList.className = "genreList";
     genreList.textContent = movie.genres.map(g => g.genre).join(", ");
 
 
-    movieDetails.appendChild(movieTitle);
-    movieDetails.appendChild(movieDesc);
-    movieDetails.appendChild(ageRating);
-    movieDetails.appendChild(genreList);
+    movieContainer.appendChild(moviePoster);
+    movieContainer.appendChild(movieTitle);
+    movieContainer.appendChild(genreList);
 
-    movieBox.appendChild(moviePoster);
-    movieBox.appendChild(movieDetails);
-
-    movieContainer.appendChild(movieBox);
 
 }
 
 function createScreeningSchedule(screenings) {
-    scrContainer.innerHTML = "";
+    if(timeColumnContainer) timeColumnContainer.innerHTML = ''; 
 
     if (!screenings || screenings.length === 0) {
-        scrContainer.innerHTML = `<p>No times available</p>`;
+        const warning = document.createElement('h3');
+        warning.innerHTML = "No times available";
+        timeColumnContainer.appendChild(warning);
         return;
+
     }
+
 
     //Gruppere screening via date
     const screeningsByDate = screenings.reduce((acc, screening) => {
@@ -435,75 +428,79 @@ function createScreeningSchedule(screenings) {
         return acc;
     }, {});
 
-    //Sortere dates ud fra ældst først
+
+    //Sortere dates ud fra tidligst først
     const sortedDates = Object.keys(screeningsByDate).sort(
         (a, b) => new Date(a) - new Date(b)
+        
     );
+
 
     //Opretter en screening box for alle screenings
     sortedDates.forEach(date => {
         const screeningsForDate = screeningsByDate[date];
+        
+        const timeColumn = document.createElement('div');
+        timeColumn.className = 'timeColumn';
+        timeColumnContainer.appendChild(timeColumn);
+        
 
-        const srcBox = document.createElement("div");
-        srcBox.className = "screeningBox";
-
-        const srcDate = document.createElement("time");
-        srcDate.textContent = new Date(date).toLocaleDateString("da-DK", {
+        const time = document.createElement("time");
+        time.textContent = new Date(date).toLocaleDateString("da-DK", {
             weekday: "long",
             day: "numeric",
             month: "long"
         });
-        srcBox.appendChild(srcDate);
+        timeColumn.appendChild(time);
 
-        const boxForTimes = document.createElement("div");
-        boxForTimes.className = "boxForTimes";
+        /* const boxForTimes = document.createElement("div");
+        boxForTimes.className = "boxForTimes"; */
 
         screeningsForDate.forEach(s => {
-            const timeBox = document.createElement("a");
+            const timeBox = document.createElement("div");
             timeBox.className = "timeBox";
+            timeColumn.appendChild(timeBox);
 
-            const theater = document.createElement("p");
-            theater.className = "theaterName";
-            //theater.textContent = s.theaterName; Lige nu er den hardcoded, fordi jeg ikke får theater med API
-            theater.textContent = "sal 1"
-
-            const time = document.createElement("p");
+            const time = document.createElement("h4");
             time.className = "startTime";
+            timeBox.appendChild(time);
+
+            const theaterName = document.createElement("p");
+            timeBox.appendChild(theaterName);
+
+              
 
             //format time fra 1200 -> 12.00
-
             let formatTime =  (s.startTime / 100).toFixed(2);
 
             time.textContent = formatTime;
 
-            timeBox.addEventListener("click", () => {
+            timeBox.addEventListener('click', () => {
                 //her tænker jeg at næste view bliver trigget?
                 //Brug s som parameter for at få screening objektet med, fx:
                 //     vic's Function(s)
+                
+                
 
             })
 
-            timeBox.appendChild(theater);
-            timeBox.appendChild(time);
-            boxForTimes.appendChild(timeBox);
         });
 
-        srcBox.appendChild(boxForTimes);
-        scrContainer.appendChild(srcBox);
+        
     });
+    
 }
 
 async function fetchScreening(movieId){
     screenings = await fetchAnyUrl(urlScreening + "/" +  movieId);
+
     try {
         if(screenings && screenings.length > 0){
-            createScreeningSchedule(screenings);
             const movie = screenings[0].movie;
+            createScreeningSchedule(screenings);
             createMoviePoster(movie);
-        } else {
-            movieContainer.innerHTML = "";
-            chooseTime.style.display = "none";
-            scrContainer.innerHTML = `<p style="color: white"> No screenings for this movie at the time</p>`;
+            console.log(screenings)
+
         }
     } catch (err) {
         console.error(err);
