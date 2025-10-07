@@ -457,7 +457,8 @@ function createScreeningSchedule(screenings) {
 
     if (!screenings || screenings.length === 0) {
         const warning = document.createElement('h3');
-        warning.innerHTML = "No times available";
+        warning.textContent = "No times available.";
+        warning.className = "warning";
         timeColumnContainer.appendChild(warning);
         return;
 
@@ -493,11 +494,16 @@ function createScreeningSchedule(screenings) {
         timeDataContainer.className = "timeDataContainer";
         timeColumn.appendChild(timeDataContainer);
 
-        const weekdayEl = document.createElement("h4"); 
+        const weekdayEl = document.createElement("h4");
+        let weekDayElData;
         weekdayEl.className = "screeningWeekday";
-        weekdayEl.textContent = screeningDate.toLocaleDateString("da-DK", {
+        weekDayElData = screeningDate.toLocaleDateString("da-DK", {
             weekday: "long"
         });
+        const firstLetter = weekDayElData.charAt(0).toUpperCase();
+        const restOfString = weekDayElData.slice(1);
+        weekDayElData = firstLetter + restOfString;
+        weekdayEl.textContent = weekDayElData
         timeDataContainer.appendChild(weekdayEl);
 
         const dateEl = document.createElement("p");
