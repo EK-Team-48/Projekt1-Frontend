@@ -7,7 +7,8 @@ let allMovies = [];
 let screenings = [];
 let seats;
 let bookedSeats;
-let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, bookBtn, price, tickets, confirmButton, scrContainer, movieContainer, background, genre, search;
+let selectedScreening = null;
+let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, bookBtn, price, tickets, confirmButton, movieContainer, background, genre, search;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
@@ -41,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     timeSelectionFrameContent = document.querySelector('.timeSelectionFrameContent');
     timeColumnContainer = document.querySelector('.timeColumnContainer');
 
-    scrContainer = document.querySelector(".screeningBoxContainer");
 
     movieContainer = document.querySelector(".movieContainer");
 
@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
 
     fetchMovies();
-    renderSeatsByScreening();
     loadGenres();
     window.closeView = closeView;
 
@@ -269,7 +268,7 @@ async function handleConfirmClick() {
   }
 
   const bookingPayload = {
-    screeningId: 1,
+    screeningId: selectedScreening.screeningId,
     seatIds: seatsToBook.map(seat => seat.seatId),
   };
 
@@ -305,11 +304,10 @@ async function handleConfirmClick() {
 }
 
 
-async function renderSeatsByScreening(screeningId) {
+async function renderSeatsByScreening(screening) {
   const seatContainer = document.querySelector(".seatContainer");
-  seats = await fetchAnyUrl(`${API_BASE}/seats/${1}`);
-  console.log(seats);
-  bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
+  seats = await fetchAnyUrl(`${API_BASE}/seats/${screening.theater.id}`);
+  bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${screening.screeningId}`)
 
   const bookedSeatsIds = new Set(bookedSeats.map(seat => seat.seatId));
 
@@ -317,6 +315,13 @@ async function renderSeatsByScreening(screeningId) {
     seatContainer.innerHTML = "<p>Ingen sæder.</p>";
     return;
   }
+
+  //reset data
+  selectedSeatsMap.clear();
+  ticketCounter = 0;
+  priceCounter = 0;
+  tickets.textContent = ticketCounter;
+  price.textContent = priceCounter;
 
   // Find antal rækker
   const maxRows = seats.reduce((m, s) => Math.max(m, Number(s.seatRow)), 0);
@@ -372,6 +377,8 @@ async function renderSeatsByScreening(screeningId) {
     seatContainer.appendChild(row);
 
     r++;
+
+    modal2.style.display = 'flex';
   }
 
 }
@@ -379,7 +386,9 @@ async function renderSeatsByScreening(screeningId) {
 
 //Hannis funktion
 function testHanni(movie) {
+    createMoviePoster(movie);
     fetchScreening(movie.movieId);
+
     closeView();
     displayScreenings()
 
@@ -400,15 +409,18 @@ function createMoviePoster(movie){
     }
     
 
-    const moviePoster = document.createElement('div');
+    /* const moviePoster = document.createElement('div');
     moviePoster.className = 'filmBox__poster';
     moviePoster.style.backgroundImage = `url("${movie.movieImg}")`;
-    console.log(`url("${movie.movieImg}")`)
+    movieContainer.appendChild(moviePoster); */
+
 
 
     const movieTitle = document.createElement("h1");
     movieTitle.className="movieTitle";
     movieTitle.textContent = movie.movieTitle
+    movieContainer.appendChild(movieTitle);
+    
 
     const ageRating = document.createElement("p");
     ageRating.className ="ageRating";
@@ -417,11 +429,9 @@ function createMoviePoster(movie){
     const genreList = document.createElement("P");
     genreList.className = "genreList";
     genreList.textContent = movie.genres.map(g => g.genre).join(", ");
-
-
-    movieContainer.appendChild(moviePoster);
-    movieContainer.appendChild(movieTitle);
     movieContainer.appendChild(genreList);
+
+
 
 
 }
@@ -457,22 +467,34 @@ function createScreeningSchedule(screenings) {
     //Opretter en screening box for alle screenings
     sortedDates.forEach(date => {
         const screeningsForDate = screeningsByDate[date];
-        
+        const screeningDate = new Date(date);
+
         const timeColumn = document.createElement('div');
         timeColumn.className = 'timeColumn';
         timeColumnContainer.appendChild(timeColumn);
+
+        const timeDataContainer = document.createElement('div');
+        timeDataContainer.className = "timeDataContainer";
+        timeColumn.appendChild(timeDataContainer);
+
+        const weekdayEl = document.createElement("h4"); 
+        weekdayEl.className = "screeningWeekday";
+        weekdayEl.textContent = screeningDate.toLocaleDateString("da-DK", {
+            weekday: "long"
+        });
+        timeDataContainer.appendChild(weekdayEl);
+
+        const dateEl = document.createElement("p");
+        dateEl.className = "screeningDate";
+        let dateElData = screeningDate.toLocaleDateString("da-DK", {
+            day: "numeric",
+            month: "numeric"
+        });
+        dateElData = dateElData.replace('.', '/');
+        dateEl.textContent = dateElData;
+        timeDataContainer.appendChild(dateEl);
         
 
-        const time = document.createElement("time");
-        time.textContent = new Date(date).toLocaleDateString("da-DK", {
-            weekday: "long",
-            day: "numeric",
-            month: "long"
-        });
-        timeColumn.appendChild(time);
-
-        /* const boxForTimes = document.createElement("div");
-        boxForTimes.className = "boxForTimes"; */
 
         screeningsForDate.forEach(s => {
             const timeBox = document.createElement("div");
@@ -481,25 +503,28 @@ function createScreeningSchedule(screenings) {
 
             const time = document.createElement("h4");
             time.className = "startTime";
+            let formatTime =  (s.startTime / 100).toFixed(2);
+            time.textContent = formatTime;
             timeBox.appendChild(time);
 
+
             const theaterName = document.createElement("p");
+            theaterName.textContent = s.theater.theaterName;
             timeBox.appendChild(theaterName);
 
               
 
-            //format time fra 1200 -> 12.00
-            let formatTime =  (s.startTime / 100).toFixed(2);
-
-            time.textContent = formatTime;
+            
 
             timeBox.addEventListener('click', () => {
-                //her tænker jeg at næste view bliver trigget?
-                //Brug s som parameter for at få screening objektet med, fx:
-                //     vic's Function(s)
-                
-                
+             selectedScreening = s;
+             console.log(selectedScreening);
 
+             closeView();
+             renderSeatsByScreening(s)
+
+             
+              
             })
 
         });
@@ -510,16 +535,10 @@ function createScreeningSchedule(screenings) {
 }
 
 async function fetchScreening(movieId){
-    screenings = await fetchAnyUrl(urlScreening + "/" +  movieId);
-
     try {
-        if(screenings && screenings.length > 0){
-            const movie = screenings[0].movie;
-            createScreeningSchedule(screenings);
-            createMoviePoster(movie);
-            console.log(screenings)
+        screenings = await fetchAnyUrl(urlScreening + "/" + movieId);
+        createScreeningSchedule(screenings);
 
-        }
     } catch (err) {
         console.error(err);
     }

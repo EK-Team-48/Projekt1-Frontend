@@ -14,17 +14,21 @@
 }
 
 body {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+  background-color: var(--background-primary);
 }
 
 body::-webkit-scrollbar {
-    display: none;
+  display: none;
+  width: 0; /* Sometimes needed for Webkit to fully hide it */
+  height: 0;
 }
 
-/*
-Header
- */
+
+
 .gradient-bg {
   background: var(--background);
   color: var(--text-primary);
@@ -40,9 +44,6 @@ header {
   margin: 0 0 0.5rem;
 }
 
-/*
-Body
- */
 
 .filter {
   padding: 20px;
@@ -59,13 +60,7 @@ button {
   border: 1px solid #ccc;
 }
 
-body {
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-  background-color: var(--background-primary);
-}
+
 
 .background {
   background: var(--background);
@@ -79,6 +74,7 @@ body {
   padding: 2em;
   align-items: center;
   justify-content: center;
+  margin: 0;
 }
 
 .filmBoxContainer {
@@ -366,7 +362,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .seatFrame {
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -508,13 +504,24 @@ input[type="number"]::-webkit-outer-spin-button {
 .timeSelectionFrameContent {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   align-items: center;
   width: 60%;
   max-width: 600px;
+  max-height: 100vh;
+  overflow-y: auto;
   background: var(--background);
   padding: 3em;
+
+}
+
+.timeSelectionFrameContent::-webkit-scrollbar {
+  display: none;
+}
+
+.timeColumnContainer::-webkit-scrollbar {
+  display: none;
 }
 
 .timeSelectionFrameContent h1 {
@@ -537,8 +544,10 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .timeBox {
   display: flex;
+  flex-direction: column;
   padding: 1em 2em;
-  margin-bottom: 1em;
+  margin-bottom: .5em;
+  margin-top: .5em;
   background-color: #09e57e;
   color: var(--background-tertiary);
   border-radius: .5em;
@@ -554,52 +563,14 @@ input[type="number"]::-webkit-outer-spin-button {
   color: #09e57e;
 }
 
-/* Container holding all the day boxes */
-.screeningBoxContainer {
+.timeDataContainer {
   display: flex;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 2em;
+  flex-direction: column;
 }
 
-
-
-.screeningBox:hover {
-  transform: translateY(-4px);
-}
-
-/* Date at the top of the day box */
-.screeningBox time {
-  display: block;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #E6EAF0; /* light text */
-  margin-bottom: 1rem;
-  border-bottom: 2px solid #9AA5B1; /* light border */
-  padding-bottom: 0.5rem;
-}
-
-/* Container for all time/theater boxes in a day */
-.boxForTimes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-
-
-
-
-/* Theater name inside timeBox */
-.theaterName {
-  font-size: 0.85rem;
-  margin: 0;
-}
-
-/* Start time inside timeBox */
 .startTime {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1em;
+  font-weight: 800;
   margin: 0;
 }
 
