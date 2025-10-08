@@ -2,26 +2,23 @@
 import { fetchAnyUrl, postObjectAsJson } from './modulejson.js';
 
 const API_BASE = 'http://localhost:8080/api/v1';
+const urlScreening = API_BASE + "/screenings";
+const API_CUSTOMER = 'http://localhost:8080/api/v1/customer';
+const API_RESERVATION = 'http://localhost:8080/api/v1/reservations'
 
 let allMovies = [];
 let screenings = [];
 let seats;
 let bookedSeats;
 let selectedScreening = null;
-let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, bookBtn, price, tickets, confirmButton, movieContainer, background, genre, search;
+let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, 
+timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, 
+bookBtn, price, tickets, confirmButton, movieContainer, 
+background, genre, search, createUser, test, checkoutButton, checkoutFrame;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
-const urlScreening = API_BASE + "/screenings";
-const API_CUSTOMER = 'http://localhost:8080/api/v1/customer';
-const API_RESERVATION = 'http://localhost:8080/api/v1/reservations'
 
-
-const createUser = document.querySelector(".checkout-form");
-const test = document.querySelector(".checkout-box")
-const checkoutButton = document.querySelector(".btn");
-const confirmOrder = document.querySelector(".confirm-order");
-const seatsContainer = document.querySelector(".seatFrame");
 
 const seatSvg = `<svg width="373" height="302" viewBox="0 0 373 302" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M59.6255 62.943C61.8735 27.1287 92.2795 0 128.164 0H244.496C280.524 0 310.983 27.3426 313.109 63.3074C315.642 106.136 315.478 142.505 312.758 185.141C310.614 218.737 283.726 245.44 250.12 247.418C204.942 250.078 167.264 250.032 122.613 247.39C89.1292 245.408 62.2622 218.906 60.004 185.44C57.0857 142.19 56.9444 105.656 59.6255 62.943Z" fill="#D9D9D9"/>
@@ -50,6 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
     timeSelectionFrame = document.querySelector('.timeSelectionFrame');
     timeSelectionFrameContent = document.querySelector('.timeSelectionFrameContent');
     timeColumnContainer = document.querySelector('.timeColumnContainer');
+    createUser = document.querySelector(".checkout-form");
+    test = document.querySelector(".checkout-box");
+    checkoutButton = document.querySelector(".btn");
+    checkoutFrame = document.querySelector(".checkoutFrame");
 
 
     movieContainer = document.querySelector(".movieContainer");
@@ -69,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.addEventListener('click', e => { if (e.target === modal) closeView(); });
     modal2.addEventListener('click', e => { if (e.target === modal2) closeView(); });
     timeSelectionFrame.addEventListener('click', e => { if (e.target === timeSelectionFrame) closeView(); });
+    checkoutFrame.addEventListener('click', e => { if (e.target === checkoutFrame) closeView(); });
     confirmButton.addEventListener('click', handleConfirmClick);
     genre.addEventListener("change", (e) => {
       const selected = e.target.value;
@@ -80,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
-
 
 async function fetchMovies() {
     try {
@@ -173,6 +174,7 @@ function closeView() {
     modal.style.display = 'none';
     modal2.style.display = 'none';
     timeSelectionFrame.style.display = 'none';
+    checkoutFrame.style.display = 'none';
 }
 
 async function loadGenres() {
@@ -270,8 +272,9 @@ function handleSeatClick(screeningId) {
 
 function openPopUP() {
   if (!test) return;
+  closeView();
+  checkoutFrame.style.display = "flex";
   test.classList.add("active");
-  seatsContainer.style.display = "none";
 }
 
 async function handleConfirmClick() {
@@ -281,41 +284,6 @@ async function handleConfirmClick() {
     alert("Vælg venligst sæder inden du booker");
     return;
   }
-
-  const bookingPayload = {
-    screeningId: selectedScreening.screeningId,
-    seatIds: seatsToBook.map(seat => seat.seatId),
-  };
-
-  const BOOKING_API_URL = `${API_BASE}/bookedseats`;
-
-
-
-  console.log(bookingPayload);
-
-  try {
-    console.log("Attempting to book seats with payload:", bookingPayload);
-
-    const response = await postObjectAsJson(
-      BOOKING_API_URL,
-      bookingPayload,
-      'POST'
-    )
-
-    if(response.ok) {
-      const result = await response.json();
-      selectedSeatsMap.clear();
-    } else {
-      const errorText = await response.text();
-      console.error("Booking failed:", response.status, errorText);
-      alert(`Booking failed. Status: ${response.status}`);
-    }
-
-  } catch(e) {
-    console.error("Error during post operation:", e);
-        alert("An unexpected error occurred.");
-  }
-
   openPopUP();
 }
 
@@ -567,12 +535,13 @@ async function fetchScreening(movieId){
 
 }
 
-
+const confirmOrder = document.querySelector(".confirm-order");
 confirmOrder?.addEventListener("click", async (e) => {
   e.preventDefault();
 
   const seatsToBook = Array.from(selectedSeatsMap.values());
   const seatIds = seatsToBook.map(seat => seat.seatId);
+  const id = self.crypto.randomUUID();
 
   const creds = Object.fromEntries(new FormData(createUser));
   const userObj = {
@@ -593,8 +562,9 @@ confirmOrder?.addEventListener("click", async (e) => {
 
         const reservationObj = {
         customerID: response.customerId,
-        screeningID: 1, //afventer at modtage, så tester med 1
-        seatId: seatIds
+        screeningID: selectedScreening.screeningId,
+        seatId: seatIds,
+        userReservationId: id
       };
 
       const reservation = await postObjectAsJson(API_RESERVATION, reservationObj, "POST");
@@ -605,17 +575,18 @@ confirmOrder?.addEventListener("click", async (e) => {
 
 
       const bookingPayload = {
-        screeningId: 1,
+        screeningId: selectedScreening.screeningId,
         seatIds: seatIds
       };
 
-    console.log(seatIds);
+    console.log(selectedScreening);
 
     const seatBookingResponse = await postObjectAsJson(`${API_BASE}/bookedseats`,bookingPayload,"POST");      
     if(!seatBookingResponse.ok) {
       alert("Seat booking failed");
       return;
     }
+
     const seatsInfo = Array.from(selectedSeatsMap.values())
     const seatDetails = seatsInfo.map(seat => `Row: ${seat.seatRow}, Seat: ${seat.seatNumber}`).join(" | ");
     const theaterName = seatsInfo[0]?.theater.theaterName || 'Unknown Theater';
@@ -630,19 +601,23 @@ confirmOrder?.addEventListener("click", async (e) => {
       const email = document.getElementById("email").value;
       const number = document.getElementById("number").value;
 
-      const confirmation = `
+
+    const confirmation = `
+    <div class="confirmedFrame">
       <div class="confirmed-section">
-    <div class="confirmed-box">
-      <h1>Order confirmation</h1>
-      <div class="confirmed-text"><i class="fa-solid fa-check"></i></div>
-      <div class="confirmed-text"><p>Your order has been confirmed</p></div>
-      <div class="confirmed-text"><p class="customer-name">Name: ${firstName} ${lastName}</p></div>
-      <div class="confirmed-text"><p class="customer-email">Email: ${email}</p></div>
-      <div class="confirmed-text"><p class="customer-number">Number: ${number}</p></div>
-      <div class="confirmed-text"><p class="customer-theater">Theater: ${theaterName}</p></div>
-      <div class="confirmed-text"><p class="customer-movie">Movie: Dune</p></div>
-      <div class="confirmed-text"><time datetime="2025-01-01">Date and time: 01/01/2025 11.00</time></div>
-      <div class="confirmed-text"><p class="customer-seats">Seat: ${seatDetails}</p></div>
+       <div class="confirmed-box">
+        <div class="confirmed-header"><h1>Order confirmation</h1></div>
+        <div class="confirmed-text"><i class="fa-solid fa-check"></i></div>
+        <div class="confirmed-text"><p>Your order has been confirmed</p></div>
+        <div class="confirmex-text"><p style="text-align: center" class="cusomter-id">Rservation id: <br>${id}</p></div>
+        <div class="confirmed-text"><p class="customer-name">Name: ${firstName} ${lastName}</p></div>
+        <div class="confirmed-text"><p class="customer-email">Email: ${email}</p></div>
+        <div class="confirmed-text"><p class="customer-number">Number: ${number}</p></div>
+        <div class="confirmed-text"><p class="customer-theater">Theater: ${theaterName}</p></div>
+        <div class="confirmed-text"><p class="customer-movie">Movie: ${selectedScreening.movie.movieTitle}</p></div>
+        <div class="confirmed-text"><time datetime="2025-01-01">Date: ${selectedScreening.screeningDate} & Start time: ${selectedScreening.startTime}</time></div>
+        <div class="confirmed-text"><p class="customer-seats">Booked seats: ${seatDetails}</p></div>
+        </div>
     </div>
     </div>
   `;
