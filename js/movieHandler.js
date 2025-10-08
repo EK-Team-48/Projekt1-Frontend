@@ -6,18 +6,22 @@ let allMovies = [];
 let allGenres = [];
 let allAgeLimits = [];
 let allScreenings = [];
-let container, addMovieBtn;
+let container, addMovieBtn, gBtn, alBtn;
 
 document.addEventListener('DOMContentLoaded', () => {
     container = document.querySelector('.movieHandlerBoxContainer');
     addMovieBtn = document.getElementById("addMovieBtn");
+    gBtn = document.getElementById("manageGenres");
+    alBtn = document.getElementById("manageAgeLimits");
 
     fetchMovies();
     fetchGenres();
     fetchAgeLimits();
     fetchScreenings();
 
-    addMovieBtn.addEventListener('click', () => movieMaker())
+    addMovieBtn.addEventListener('click', () => movieMaker());
+    gBtn.addEventListener('click', () => openGenreDetails());
+    alBtn.addEventListener('click', () => openAgeLimitDetails());
 
 });
 
@@ -286,3 +290,197 @@ async function movieMaker() {
 
     document.body.appendChild(movieWindow);
 }
+
+function openGenreDetails() {
+
+    document.querySelector('.movieEditorModal')?.remove();
+
+    const genreWindow = document.createElement('div');
+    genreWindow.className = 'movieEditorModal';
+    genreWindow.innerHTML = `
+    <div class="movieEditorContent">
+      <div class="row">
+        <input type="text" placeholder="etc. Horror, Drama, Sci-Fi" id="newGenre">
+        <button class="addMovieBtn" id="addGenre">Add Genre</button>
+      </div>
+
+      <table class="table" id="tblGenres">
+        <thead>
+          <tr>
+            <th>Genres</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="editorButtons">
+        <button id="cancelBtn">Cancel</button>
+      </div>
+    </div>
+  `;
+
+    document.body.appendChild(genreWindow);
+
+    const tbody = genreWindow.querySelector('#tblGenres tbody');
+    const addGenreBtn = genreWindow.querySelector('#addGenre');
+    const input = genreWindow.querySelector('#newGenre');
+
+    function createTable(genre) {
+        const row = tbody.insertRow();
+        row.id = `genre-${genre.genreId}`;
+
+        const cellGenre = row.insertCell();
+        cellGenre.textContent = genre.genre;
+
+        const cellDeleteGenre = row.insertCell();
+        const pbDelete = document.createElement('button');
+        pbDelete.type = 'button';
+        pbDelete.textContent = 'Delete';
+        pbDelete.className = 'deleteBtn1';
+        cellDeleteGenre.appendChild(pbDelete);
+
+        pbDelete.onclick = async function () {
+            try {
+                const res = await postObjectAsJson(`${API_BASE}/genres/${genre.genreId}`, genre, "DELETE");
+                if (!res.ok) {
+                    const msg = await res.text().catch(() => '');
+                    throw new Error(msg || `HTTP ${res.status}`);
+                }
+                allGenres = allGenres.filter(g => g.genreId !== genre.genreId);
+                renderRows();
+            } catch (err) {
+                alert(`${genre.genre} is attached to a movie. Remove/Edit the movies before deleting the genres.`);
+            }
+        };
+    }
+
+    function renderRows() {
+        tbody.innerHTML = '';
+        allGenres.forEach(createTable);
+    }
+
+    addGenreBtn.addEventListener('click', async () => {
+        const name = (input.value || '').trim();
+        if (!name) return;
+        if (allGenres.some(g => g.genre.toLowerCase() === name.toLowerCase())) {
+            alert('Genre already exists');
+            return;
+        }
+
+        try {
+            const res = await postObjectAsJson(`${API_BASE}/genres`, { genre: name }, 'POST');
+            if (!res.ok) {
+                const msg = await res.text().catch(() => '');
+                throw new Error(msg || `HTTP ${res.status}`);
+            }
+            allGenres = await fetchAnyUrl(`${API_BASE}/genres`);
+            input.value = '';
+            renderRows();
+        } catch (err) {
+            alert('Genre already exist');
+        }
+    });
+
+    genreWindow.querySelector('#cancelBtn').addEventListener('click', () => genreWindow.remove());
+
+    renderRows();
+}
+
+function openAgeLimitDetails() {
+
+    document.querySelector('.movieEditorModal')?.remove();
+
+    const ageLimitWindow = document.createElement('div');
+    ageLimitWindow.className = 'movieEditorModal';
+    ageLimitWindow.innerHTML = `
+    <div class="movieEditorContent">
+      <div class="row">
+        <input type="text" placeholder="etc. 7, 12, 18" id="newAgeLimit">
+        <button class="addMovieBtn" id="addAgeLimit">Add Age Limit</button>
+      </div>
+
+      <table class="table" id="tblAgeLimits">
+        <thead>
+          <tr>
+            <th>Age Limits</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="editorButtons">
+        <button id="cancelBtn">Cancel</button>
+      </div>
+    </div>
+  `;
+
+    document.body.appendChild(ageLimitWindow);
+
+    const tbody = ageLimitWindow.querySelector('#tblAgeLimits tbody');
+    const addAgeLimitBtn = ageLimitWindow.querySelector('#addAgeLimit');
+    const input = ageLimitWindow.querySelector('#newAgeLimit');
+
+    function createTable(ageLimit) {
+        const row = tbody.insertRow();
+        row.id = `${ageLimit.ageLimitId}`;
+
+        const cellAgeLimit = row.insertCell();
+        cellAgeLimit.textContent = ageLimit.ageRating;
+
+        const cellDeleteAgeLimit = row.insertCell();
+        const pbDelete = document.createElement('button');
+        pbDelete.type = 'button';
+        pbDelete.textContent = 'Delete';
+        pbDelete.className = 'deleteBtn1';
+        cellDeleteAgeLimit.appendChild(pbDelete);
+
+        pbDelete.onclick = async function () {
+            try {
+                const res = await postObjectAsJson(`${API_BASE}/ageLimits/${ageLimit.ageLimitId}`, ageLimit, "DELETE");
+                if (!res.ok) {
+                    const msg = await res.text().catch(() => '');
+                    throw new Error(msg || `HTTP ${res.status}`);
+                }
+                allAgeLimits = allAgeLimits.filter(al => al.ageLimitId !== ageLimit.ageLimitId);
+                renderRows();
+            } catch (err) {
+                alert(`${ageLimit.ageRating} is attached to a movie. Remove/Edit the movies before deleting the genres.`);
+            }
+        };
+    }
+
+    function renderRows() {
+        tbody.innerHTML = '';
+        allAgeLimits.forEach(createTable);
+    }
+
+    addAgeLimitBtn.addEventListener('click', async () => {
+        const val = (input.value || '').trim();
+        if (!val) return;
+        if (allAgeLimits.some(al => al.ageRating === val)) {
+            alert('Age Limit already exists');
+            return;
+        }
+
+        try {
+            const res = await postObjectAsJson(`${API_BASE}/ageLimits`, { ageRating: val }, 'POST');
+            if (!res.ok) {
+                const msg = await res.text().catch(() => '');
+                throw new Error(msg || `HTTP ${res.status}`);
+            }
+            allAgeLimits = await fetchAnyUrl(`${API_BASE}/ageLimits`);
+            input.value = '';
+            renderRows();
+        } catch (err) {
+            alert('Age Limit already exist');
+        }
+    });
+
+    ageLimitWindow.querySelector('#cancelBtn').addEventListener('click', () => ageLimitWindow.remove());
+
+    renderRows();
+}
+
+

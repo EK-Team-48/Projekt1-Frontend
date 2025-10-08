@@ -874,6 +874,13 @@ Movie handler sektion. Til at tilføje, redigere og slette film
   transform: scale(1.05);
 }
 
+.btnRow {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .addMovieBtn {
   border: none;
   border-radius: 1em;
@@ -883,6 +890,8 @@ Movie handler sektion. Til at tilføje, redigere og slette film
   cursor: pointer;
   transition: color 0.5s, transform 0.5s, border-radius;
 }
+
+.genre
 
 .addMovieBtn:hover {
   transform: scale(1.05);
