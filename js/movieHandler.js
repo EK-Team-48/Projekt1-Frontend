@@ -6,13 +6,14 @@ let allMovies = [];
 let allGenres = [];
 let allAgeLimits = [];
 let allScreenings = [];
-let container, addMovieBtn, gBtn, alBtn;
+let container, addMovieBtn, gBtn, alBtn, search;
 
 document.addEventListener('DOMContentLoaded', () => {
     container = document.querySelector('.movieHandlerBoxContainer');
     addMovieBtn = document.getElementById("addMovieBtn");
     gBtn = document.getElementById("manageGenres");
     alBtn = document.getElementById("manageAgeLimits");
+    search = document.getElementById("search");
 
     fetchMovies();
     fetchGenres();
@@ -22,6 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     addMovieBtn.addEventListener('click', () => movieMaker());
     gBtn.addEventListener('click', () => openGenreDetails());
     alBtn.addEventListener('click', () => openAgeLimitDetails());
+    search.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+        filterMoviesBySearch(query);
+    });
 
 });
 
@@ -99,9 +104,6 @@ function renderMovies(allMovies) {
 }
 
 function openMovieEditor(m) {
-
-    let oldEditor = document.querySelector('.movieEditorModal');
-    if (oldEditor) oldEditor.remove();
 
     const modal = document.createElement('div');
     modal.className = 'movieEditorModal';
@@ -193,7 +195,7 @@ async function deleteMovie(movie) {
         const res = await postObjectAsJson(`${API_BASE}/movies/${movie.movieId}`, movie, "DELETE");
         if (!res.ok) {
             const msg = await res.text().catch(() => '');
-            throw new Error(msg || `HTTP ${res.status}`);
+            throw new Error(msg);
         }
         alert(`${movie.movieTitle} has been deleted`);
         await fetchMovies();
@@ -203,9 +205,6 @@ async function deleteMovie(movie) {
 }
 
 async function movieMaker() {
-
-    let oldEditor = document.querySelector('.movieEditorModal');
-    if (oldEditor) oldEditor.remove();
 
     const movieWindow = document.createElement('div');
     movieWindow.className = 'movieEditorModal';
@@ -293,8 +292,6 @@ async function movieMaker() {
 
 function openGenreDetails() {
 
-    document.querySelector('.movieEditorModal')?.remove();
-
     const genreWindow = document.createElement('div');
     genreWindow.className = 'movieEditorModal';
     genreWindow.innerHTML = `
@@ -361,7 +358,7 @@ function openGenreDetails() {
     }
 
     addGenreBtn.addEventListener('click', async () => {
-        const name = (input.value || '').trim();
+        const name = (input.value).trim();
         if (!name) return;
         if (allGenres.some(g => g.genre.toLowerCase() === name.toLowerCase())) {
             alert('Genre already exists');
@@ -372,7 +369,7 @@ function openGenreDetails() {
             const res = await postObjectAsJson(`${API_BASE}/genres`, { genre: name }, 'POST');
             if (!res.ok) {
                 const msg = await res.text().catch(() => '');
-                throw new Error(msg || `HTTP ${res.status}`);
+                throw new Error(msg);
             }
             allGenres = await fetchAnyUrl(`${API_BASE}/genres`);
             input.value = '';
@@ -388,8 +385,6 @@ function openGenreDetails() {
 }
 
 function openAgeLimitDetails() {
-
-    document.querySelector('.movieEditorModal')?.remove();
 
     const ageLimitWindow = document.createElement('div');
     ageLimitWindow.className = 'movieEditorModal';
@@ -441,7 +436,7 @@ function openAgeLimitDetails() {
                 const res = await postObjectAsJson(`${API_BASE}/ageLimits/${ageLimit.ageLimitId}`, ageLimit, "DELETE");
                 if (!res.ok) {
                     const msg = await res.text().catch(() => '');
-                    throw new Error(msg || `HTTP ${res.status}`);
+                    throw new Error(msg);
                 }
                 allAgeLimits = allAgeLimits.filter(al => al.ageLimitId !== ageLimit.ageLimitId);
                 renderRows();
@@ -457,7 +452,7 @@ function openAgeLimitDetails() {
     }
 
     addAgeLimitBtn.addEventListener('click', async () => {
-        const val = (input.value || '').trim();
+        const val = (input.value).trim();
         if (!val) return;
         if (allAgeLimits.some(al => al.ageRating === val)) {
             alert('Age Limit already exists');
@@ -468,7 +463,7 @@ function openAgeLimitDetails() {
             const res = await postObjectAsJson(`${API_BASE}/ageLimits`, { ageRating: val }, 'POST');
             if (!res.ok) {
                 const msg = await res.text().catch(() => '');
-                throw new Error(msg || `HTTP ${res.status}`);
+                throw new Error(msg);
             }
             allAgeLimits = await fetchAnyUrl(`${API_BASE}/ageLimits`);
             input.value = '';
@@ -483,4 +478,14 @@ function openAgeLimitDetails() {
     renderRows();
 }
 
+function filterMoviesBySearch(query) {
+    if (!query) {
+        renderMovies(allMovies);
+        return;
+    }
 
+    const filtered = allMovies.filter(movie =>
+        movie.movieTitle.toLowerCase().includes(query));
+
+    renderMovies(filtered);
+}
