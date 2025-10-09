@@ -7,6 +7,10 @@ const API_BASE = 'http://localhost:8080/api/v1';
 let dashboardFrame, dashboardTheaters, dashboardMovies, dashboardScreenings, dashboardReservations, dashboardEmployees, theaterFrame, movieFrame, screeningsFrame, reservationsFrame, employeeFrame, content;
 
 let theaterContent;
+let movieContent;
+let screeningContent;
+let reservationsContent;
+let employeeContent;
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,12 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     dashboardTheaters.addEventListener('click', viewTheaters);
-    /* dashboardMovies.addEventListener('click', viewMovies);
+    dashboardMovies.addEventListener('click', viewMovies);
     dashboardScreenings.addEventListener('click', viewScreenings);
     dashboardReservations.addEventListener('click', viewReservations);
-    dashboardEmployees.addEventListener('click', viewEmployees); */
+    dashboardEmployees.addEventListener('click', viewEmployees);
 
 })
+
 
     function closeView() {
         theaterFrame.style.display = 'none';
@@ -44,20 +49,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     function viewTheaters() {
-        console.log("hejj");
+        closeView();
         fetchTheaters();
         theaterFrame.style.display = 'flex';
     }
 
     async function fetchTheaters() {
-        content.innerHTML = '';
+        const theaterContentContainer = theaterFrame.querySelector('.adminContent');
+
+        theaterContentContainer.innerHTML = '';
+
         theaterContent = await fetchAnyUrl(`${API_BASE}/theaters`);
 
         theaterContent.forEach((t) => {
             
             const adminContentTheaterElement = document.createElement('div');
             adminContentTheaterElement.className = "adminContentTheaterElement";
-            content.appendChild(adminContentTheaterElement);
+            theaterContentContainer.appendChild(adminContentTheaterElement);
 
             const title = document.createElement('h2');
             title.textContent = t.theaterName;
@@ -66,6 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.textContent = 'Delete';
             button.className = 'adminButton delete';
+            button.addEventListener('click', () => {
+                //Delete Request
+            })
             adminContentTheaterElement.appendChild(button);
             console.log(t);
         })
@@ -74,6 +85,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    function viewMovies () {
+        closeView();
+        fetchMovies();
+        movieFrame.style.display = 'flex';
+    }
+
+    async function fetchMovies() {
+        const movieContentContainer = movieFrame.querySelector('.adminContent');
+
+        movieContentContainer.innerHTML = '';
+        movieContent = await fetchAnyUrl(`${API_BASE}/movies`);
+
+        movieContent.forEach((movie) => {
+            console.log(movie);
+
+            
+            const adminContentMovieElement = document.createElement('div');
+            adminContentMovieElement.className = "adminContentMovieElement";
+            movieContentContainer.appendChild(adminContentMovieElement);
+
+            const title = document.createElement('h2');
+            title.textContent = movie.movieTitle;
+            adminContentMovieElement.appendChild(title);
+
+            const button = document.createElement('button');
+            button.textContent = 'Delete';
+            button.className = 'adminButton delete';
+            button.addEventListener('click', () => {
+                //Delete Request
+            })
+            adminContentMovieElement.appendChild(button);
+        })
+
+
+    }
+
+    function viewScreenings() {
+
+    }
+
+    function fetchScreenings() {
+
+    }
+
+    function viewReservations() {
+
+    }
+
+    function fetchReservations() {
+
+    }
+
+    function viewEmployees() {
+
+    }
+
+    function fetchEmployees() {
+
+    }
     
 
 
