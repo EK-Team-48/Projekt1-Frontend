@@ -525,6 +525,8 @@ function createScreeningSchedule(screenings) {
 }
 
 async function fetchScreening(movieId){
+    screenings = await fetchAnyUrl(urlScreening + "/" +  movieId);
+
     try {
         screenings = await fetchAnyUrl(urlScreening + "/movie/" + movieId);
         createScreeningSchedule(screenings);
