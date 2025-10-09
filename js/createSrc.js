@@ -221,8 +221,20 @@ function formatTime(num) {
 }
 
 
-function deleteScreeningFunc(screening){
-    postObjectAsJson(postScreeningUrl + "/" + screening.screeningId, screening, "DELETE")
+async function deleteScreeningFunc(screening){
+    const screeningDeleted = `\n ${screening.movie.movieTitle} \n ${screening.theater.theaterName} \n ${screening.screeningDate} \n ${formatTime(screening.startTime)} \n ${screening.price} kr \n`;
+    try{
+    const delSrc = await postObjectAsJson(postScreeningUrl + "/" + screening.screeningId, screening, "DELETE");
+    if(!delSrc.ok){
+        const srcMsg = await delSrc.text().catch(() => '');
+        throw new Error(srcMsg)
+    }
+    alert(`Screening deleted: ${screeningDeleted}`);
+    await fetchAllScreenings();
+    } catch(err) {
+        alert(`Could not delete screening:  ${screeningDeleted} It is attached to a reservation. Remove the reservation first.`)
+
+    }
 }
 
 function updateScreeningFunc(screening) {
