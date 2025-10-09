@@ -351,14 +351,44 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: 10px;
   border: 1px solid var(--accent);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-  color: var(--text-primary);
-  text-align: center;
 }
 
 .confirmed-section.active {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
   pointer-events: auto;
+}
+
+.confirmed-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.confirmed-text {
+  width: 100%;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.confirmed-header {
+  margin-bottom: 10px;
+}
+
+.confirmed-text .fa-check {
+  font-size: 3rem;
+  color: #4CAF50;
+  padding: 1rem;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.confirmed-text p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .seatFrame {
@@ -584,6 +614,10 @@ input[type="number"]::-webkit-outer-spin-button {
   color: var(--text-secondary)
 }
 
+.warning {
+  color: var(--text-secondary)
+}
+
 
 
 
@@ -643,6 +677,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .login-container {
+  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -721,6 +756,39 @@ input[type="number"]::-webkit-outer-spin-button {
   transform: translateY(-2px);
 }
 
+.checkoutFrame {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(.25em);               
+  -webkit-backdrop-filter: blur(.25em); 
+}
+
+.confirmedFrame {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(.25em);               
+  -webkit-backdrop-filter: blur(.25em); 
+}
+
 /* Animation */
 @keyframes fadeIn {
   from {
@@ -732,6 +800,7 @@ input[type="number"]::-webkit-outer-spin-button {
     transform: translate(-50%, -50%);
   }
 }
+
 
 .dashboardFrame {
   display: flex;
@@ -899,4 +968,313 @@ input[type="number"]::-webkit-outer-spin-button {
 
 
 
+
+
+/*
+Movie handler sektion. Til at tilføje, redigere og slette film
+ */
+.movieHandlerContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 2em;
+  align-items: center;
+  justify-content: center;
+}
+
+.movieHandlerBoxContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 2em;
+  gap: 1em;
+  align-items: center;
+  justify-content: center;
+}
+
+.movieHandlerBox {
+  display: flex;
+  width: 220px;
+  margin: 1em;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.movieHandlerBox h3 {
+  font-size: 1em;
+  color: var(--text-secondary);
+  text-align: center;
+  height: 3em;
+}
+
+.movieHandlerBox__poster:hover {
+  transform: scale(1.05);
+}
+
+.movieHandlerBox__poster {
+  width: 100%;
+  height: 284px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.movieHandlerBox__title {
+  margin: 8px 4px 0;
+  color: white;
+  font-weight: 700;
+  line-height: 1.2;
+  position: static;
+}
+
+.movieHandlerContainer h1 {
+  color: var(--text-primary);
+  font-weight: 900;
+}
+
+.movieEditorModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.movieEditorContent {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.movieEditorContent label {
+  display: block;
+  margin-top: 1em;
+}
+
+.movieEditorContent input {
+  margin-bottom: 1rem;
+  margin-top: 0.3em;
+}
+.movieEditorContent textarea {
+  width: 100%;
+  height: 5rem;
+  padding: 0.5em;
+  margin-top: 0.3em;
+}
+.movieInput,
+.movieEditorContent select {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.3em;
+}
+
+.deleteMovieBtn {
+  border: none;
+  border-radius: 1em;
+  font-weight: 800;
+  color: var(--text-secondary);
+  background: #850c0f;
+  cursor: pointer;
+  transition: color 0.5s, transform 0.5s, border-radius;
+}
+
+.deleteMovieBtn:hover {
+  transform: scale(1.05);
+}
+
+.btnRow {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.addMovieBtn {
+  border: none;
+  border-radius: 1em;
+  font-weight: 800;
+  color: var(--text-secondary);
+  background: #1f7308;
+  cursor: pointer;
+  transition: color 0.5s, transform 0.5s, border-radius;
+}
+
+.genre
+
+.addMovieBtn:hover {
+  transform: scale(1.05);
+}
+
+/*
+Movie handler sektion slut
+ */
+
+/* Container til hele create-screening sektionen */
+.createScreeningContainer {
+  background: linear-gradient(135deg, #1c1f26, #2b2f3a);
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 700px;
+  margin: 2rem auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  color: #f1f1f1;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Formular til oprettelse af ny screening */
+.createScreeningContainer form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Labels */
+.createScreeningContainer label {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  font-size: 1rem;
+}
+
+/* Dropdowns og inputs */
+.createScreeningContainer select,
+.createScreeningContainer input {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #555;
+  background-color: #2f3340;
+  color: #f1f1f1;
+  outline: none;
+  transition: border 0.2s ease;
+}
+
+.createScreeningContainer select:focus,
+.createScreeningContainer input:focus {
+  border: 1px solid #6a9df8;
+}
+
+/* Submit-knap */
+.createScreeningContainer button[type="submit"] {
+  padding: 0.8rem;
+  background: linear-gradient(90deg, #3a7bd5, #3a6073);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+
+.createScreeningContainer button[type="submit"]:hover {
+  background: linear-gradient(90deg, #4a90e2, #354b65);
+  transform: translateY(-2px);
+}
+
+/* Container til visning af screenings */
+.displayScreeningsContainer {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #1e2129;
+  border-radius: 1rem;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  color:white;
+  text-align: center;
+  font-size : 30px;
+}
+
+/* Tabellen der viser screenings */
+.screeningTable {
+  width: 100%;
+  border-collapse: collapse;
+  color: #f1f1f1;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.screeningTable th,
+.screeningTable td {
+  padding: 0.8rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid #444;
+}
+
+.screeningTable th {
+  background: #2a2e38;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.95rem;
+}
+
+.screeningTable tr:nth-child(even) {
+  background: #262a34;
+}
+
+.screeningTable tr:hover {
+  background: #2f3542;
+  transition: background 0.2s ease;
+}
+
+
+
+.update-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.update-popup {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.update-form label {
+  font-weight: bold;
+}
+
+.update-form input,
+.update-form select {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.update-form button {
+  margin-top: 1rem;
+  padding: 0.7rem;
+  cursor: pointer;
+}
+
+.update-form button[type="submit"] {
+  background: #2d7ff9;
+  color: white;
+  border: none;
+}
+
+.update-form button[type="button"] {
+  background: #aaa;
+  color: white;
+  border: none;
+}
 
