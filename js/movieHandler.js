@@ -85,7 +85,7 @@ function renderMovies(allMovies) {
         t.textContent = m.movieTitle;
 
         const d = document.createElement('button');
-        d.className = 'deleteMovieBtn';
+        d.className = 'adminButton delete';
         d.textContent = "Delete Movie"
 
         box.appendChild(poster);
@@ -143,8 +143,8 @@ function openMovieEditor(m) {
             </div>
 
             <div class="editorButtons">
-                <button id="saveBtn">Save</button>
-                <button id="cancelBtn">Cancel</button>
+                <button class="adminButton" id="saveBtn">Save</button>
+                <button class="adminButton delete" id="cancelBtn">Cancel</button>
             </div>
         </div>
     `;
@@ -244,8 +244,8 @@ async function movieMaker() {
             </div>
 
             <div class="editorButtons">
-                <button id="saveBtn">Save</button>
-                <button id="cancelBtn">Cancel</button>
+                <button class="adminButton" id="saveBtn">Save</button>
+                <button class="adminButton delete" id="cancelBtn">Cancel</button>
             </div>
         </div>
     `;
@@ -298,7 +298,7 @@ function openGenreDetails() {
     <div class="movieEditorContent">
       <div class="row">
         <input type="text" placeholder="etc. Horror, Drama, Sci-Fi" id="newGenre">
-        <button class="addMovieBtn" id="addGenre">Add Genre</button>
+        <button class="adminButton" id="addGenre">Add Genre</button>
       </div>
 
       <table class="table" id="tblGenres">
@@ -312,7 +312,7 @@ function openGenreDetails() {
       </table>
 
       <div class="editorButtons">
-        <button id="cancelBtn">Cancel</button>
+        <button class="adminButton grey" id="cancelBtn">Cancel</button>
       </div>
     </div>
   `;
@@ -334,7 +334,7 @@ function openGenreDetails() {
         const pbDelete = document.createElement('button');
         pbDelete.type = 'button';
         pbDelete.textContent = 'Delete';
-        pbDelete.className = 'deleteBtn1';
+        pbDelete.className = 'adminButton delete';
         cellDeleteGenre.appendChild(pbDelete);
 
         pbDelete.onclick = async function () {
@@ -392,7 +392,7 @@ function openAgeLimitDetails() {
     <div class="movieEditorContent">
       <div class="row">
         <input type="text" placeholder="etc. 7, 12, 18" id="newAgeLimit">
-        <button class="addMovieBtn" id="addAgeLimit">Add Age Limit</button>
+        <button class="adminButton" id="addAgeLimit">Add Age Limit</button>
       </div>
 
       <table class="table" id="tblAgeLimits">
@@ -406,7 +406,7 @@ function openAgeLimitDetails() {
       </table>
 
       <div class="editorButtons">
-        <button id="cancelBtn">Cancel</button>
+        <button class="adminButton grey" id="cancelBtn">Cancel</button>
       </div>
     </div>
   `;
@@ -428,7 +428,7 @@ function openAgeLimitDetails() {
         const pbDelete = document.createElement('button');
         pbDelete.type = 'button';
         pbDelete.textContent = 'Delete';
-        pbDelete.className = 'deleteBtn1';
+        pbDelete.className = 'adminButton delete';
         cellDeleteAgeLimit.appendChild(pbDelete);
 
         pbDelete.onclick = async function () {
