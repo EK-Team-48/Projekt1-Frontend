@@ -74,8 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.textContent = 'Delete';
             button.className = 'adminButton delete';
-            button.addEventListener('click', () => {
-                //Delete Request
+            button.addEventListener('click', async () => {
+                const response = await postObjectAsJson(`${API_BASE}/theaters/${t.theaterId}`, null, "DELETE");
+                if (response && (response.status === 200 || response.status === 204 || response.ok)) {
+                    await fetchTheaters(); 
+                } else {
+                    console.error("Failed to delete theater:", response);
+                    alert(`Error: Could not delete ${t.theaterName}. Check console.`);
+                }
+                
             })
             adminContentTheaterElement.appendChild(button);
             console.log(t);
