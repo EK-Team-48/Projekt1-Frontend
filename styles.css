@@ -936,6 +936,11 @@ input[type="number"]::-webkit-outer-spin-button {
   justify-content: space-between;
 }
 
+.adminContentMovieElement {
+  display: flex;
+  justify-content: space-between;
+}
+
 #theaterFrame {
   display: none;
 }
