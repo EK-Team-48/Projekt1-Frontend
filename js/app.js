@@ -31,7 +31,7 @@ confirmOrder?.addEventListener("click", async (e) => {
   };
 
   try {
-    const res = await postObjectAsJson(API_BASE, userObj, "POST");
+    const res = await postObjectAsJson(API_CUSTOMER, userObj, "POST");
     if (!res.ok) {
       alert("post virker ikke" + res.status);
     } else {
@@ -41,7 +41,7 @@ confirmOrder?.addEventListener("click", async (e) => {
         screeningID: 1 //afventer at modtage, så tester med 1
       }
       console.log(reservationObj);
-      const reservation = await postObjectAsJson(API_RES, reservationObj, "POST")
+      const reservation = await postObjectAsJson(API_RESERVATION, reservationObj, "POST")
       if(!reservation.ok) {
         alert("Fejl i at sende info" + res.status);
       }

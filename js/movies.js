@@ -2,16 +2,23 @@
 import { fetchAnyUrl, postObjectAsJson } from './modulejson.js';
 
 const API_BASE = 'http://localhost:8080/api/v1';
+const urlScreening = API_BASE + "/screenings";
+const API_CUSTOMER = 'http://localhost:8080/api/v1/customer';
+const API_RESERVATION = 'http://localhost:8080/api/v1/reservations'
 
 let allMovies = [];
 let screenings = [];
 let seats;
 let bookedSeats;
-let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, bookBtn, price, tickets, confirmButton, scrContainer, movieContainer, background, genre, search;
+let selectedScreening = null;
+let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, 
+timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, 
+bookBtn, price, tickets, confirmButton, movieContainer, 
+background, genre, search, createUser, test, checkoutButton, checkoutFrame;
 let bookButtonHandler = null;
 let ticketCounter = 0;
 let priceCounter = 0;
-const urlScreening = API_BASE + "/screenings";
+
 
 const seatSvg = `<svg width="373" height="302" viewBox="0 0 373 302" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M59.6255 62.943C61.8735 27.1287 92.2795 0 128.164 0H244.496C280.524 0 310.983 27.3426 313.109 63.3074C315.642 106.136 315.478 142.505 312.758 185.141C310.614 218.737 283.726 245.44 250.12 247.418C204.942 250.078 167.264 250.032 122.613 247.39C89.1292 245.408 62.2622 218.906 60.004 185.44C57.0857 142.19 56.9444 105.656 59.6255 62.943Z" fill="#D9D9D9"/>
@@ -40,8 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
     timeSelectionFrame = document.querySelector('.timeSelectionFrame');
     timeSelectionFrameContent = document.querySelector('.timeSelectionFrameContent');
     timeColumnContainer = document.querySelector('.timeColumnContainer');
+    createUser = document.querySelector(".checkout-form");
+    test = document.querySelector(".checkout-box");
+    checkoutButton = document.querySelector(".btn");
+    checkoutFrame = document.querySelector(".checkoutFrame");
 
-    scrContainer = document.querySelector(".screeningBoxContainer");
 
     movieContainer = document.querySelector(".movieContainer");
 
@@ -51,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
 
     fetchMovies();
-    renderSeatsByScreening();
     loadGenres();
     window.closeView = closeView;
 
@@ -61,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.addEventListener('click', e => { if (e.target === modal) closeView(); });
     modal2.addEventListener('click', e => { if (e.target === modal2) closeView(); });
     timeSelectionFrame.addEventListener('click', e => { if (e.target === timeSelectionFrame) closeView(); });
+    checkoutFrame.addEventListener('click', e => { if (e.target === checkoutFrame) closeView(); });
     confirmButton.addEventListener('click', handleConfirmClick);
     genre.addEventListener("change", (e) => {
       const selected = e.target.value;
@@ -72,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
-
 
 async function fetchMovies() {
     try {
@@ -165,6 +174,7 @@ function closeView() {
     modal.style.display = 'none';
     modal2.style.display = 'none';
     timeSelectionFrame.style.display = 'none';
+    checkoutFrame.style.display = 'none';
 }
 
 async function loadGenres() {
@@ -260,6 +270,13 @@ function handleSeatClick(screeningId) {
 
 }
 
+function openPopUP() {
+  if (!test) return;
+  closeView();
+  checkoutFrame.style.display = "flex";
+  test.classList.add("active");
+}
+
 async function handleConfirmClick() {
   const seatsToBook = Array.from(selectedSeatsMap.values());
 
@@ -267,49 +284,14 @@ async function handleConfirmClick() {
     alert("Vælg venligst sæder inden du booker");
     return;
   }
-
-  const bookingPayload = {
-    screeningId: 1,
-    seatIds: seatsToBook.map(seat => seat.seatId),
-  };
-
-  const BOOKING_API_URL = `${API_BASE}/bookedseats`;
-
-
-
-  console.log(bookingPayload);
-
-  try {
-    console.log("Attempting to book seats with payload:", bookingPayload);
-
-    const response = await postObjectAsJson(
-      BOOKING_API_URL,
-      bookingPayload,
-      'POST'
-    )
-
-    if(response.ok) {
-      const result = await response.json();
-      selectedSeatsMap.clear();
-    } else {
-      const errorText = await response.text();
-      console.error("Booking failed:", response.status, errorText);
-      alert(`Booking failed. Status: ${response.status}`);
-    }
-
-  } catch(e) {
-    console.error("Error during post operation:", e);
-        alert("An unexpected error occurred.");
-  }
-
+  openPopUP();
 }
 
 
-async function renderSeatsByScreening(screeningId) {
+async function renderSeatsByScreening(screening) {
   const seatContainer = document.querySelector(".seatContainer");
-  seats = await fetchAnyUrl(`${API_BASE}/seats/${1}`);
-  console.log(seats);
-  bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${1}`)
+  seats = await fetchAnyUrl(`${API_BASE}/seats/${screening.theater.id}`);
+  bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${screening.screeningId}`)
 
   const bookedSeatsIds = new Set(bookedSeats.map(seat => seat.seatId));
 
@@ -317,6 +299,13 @@ async function renderSeatsByScreening(screeningId) {
     seatContainer.innerHTML = "<p>Ingen sæder.</p>";
     return;
   }
+
+  //reset data
+  selectedSeatsMap.clear();
+  ticketCounter = 0;
+  priceCounter = 0;
+  tickets.textContent = ticketCounter;
+  price.textContent = priceCounter;
 
   // Find antal rækker
   const maxRows = seats.reduce((m, s) => Math.max(m, Number(s.seatRow)), 0);
@@ -372,6 +361,8 @@ async function renderSeatsByScreening(screeningId) {
     seatContainer.appendChild(row);
 
     r++;
+
+    modal2.style.display = 'flex';
   }
 
 }
@@ -379,7 +370,9 @@ async function renderSeatsByScreening(screeningId) {
 
 //Hannis funktion
 function testHanni(movie) {
+    createMoviePoster(movie);
     fetchScreening(movie.movieId);
+
     closeView();
     displayScreenings()
 
@@ -400,15 +393,18 @@ function createMoviePoster(movie){
     }
     
 
-    const moviePoster = document.createElement('div');
+    /* const moviePoster = document.createElement('div');
     moviePoster.className = 'filmBox__poster';
     moviePoster.style.backgroundImage = `url("${movie.movieImg}")`;
-    console.log(`url("${movie.movieImg}")`)
+    movieContainer.appendChild(moviePoster); */
+
 
 
     const movieTitle = document.createElement("h1");
     movieTitle.className="movieTitle";
     movieTitle.textContent = movie.movieTitle
+    movieContainer.appendChild(movieTitle);
+    
 
     const ageRating = document.createElement("p");
     ageRating.className ="ageRating";
@@ -417,11 +413,9 @@ function createMoviePoster(movie){
     const genreList = document.createElement("P");
     genreList.className = "genreList";
     genreList.textContent = movie.genres.map(g => g.genre).join(", ");
-
-
-    movieContainer.appendChild(moviePoster);
-    movieContainer.appendChild(movieTitle);
     movieContainer.appendChild(genreList);
+
+
 
 
 }
@@ -431,7 +425,8 @@ function createScreeningSchedule(screenings) {
 
     if (!screenings || screenings.length === 0) {
         const warning = document.createElement('h3');
-        warning.innerHTML = "No times available";
+        warning.textContent = "No times available.";
+        warning.className = "warning";
         timeColumnContainer.appendChild(warning);
         return;
 
@@ -457,22 +452,39 @@ function createScreeningSchedule(screenings) {
     //Opretter en screening box for alle screenings
     sortedDates.forEach(date => {
         const screeningsForDate = screeningsByDate[date];
-        
+        const screeningDate = new Date(date);
+
         const timeColumn = document.createElement('div');
         timeColumn.className = 'timeColumn';
         timeColumnContainer.appendChild(timeColumn);
+
+        const timeDataContainer = document.createElement('div');
+        timeDataContainer.className = "timeDataContainer";
+        timeColumn.appendChild(timeDataContainer);
+
+        const weekdayEl = document.createElement("h4");
+        let weekDayElData;
+        weekdayEl.className = "screeningWeekday";
+        weekDayElData = screeningDate.toLocaleDateString("da-DK", {
+            weekday: "long"
+        });
+        const firstLetter = weekDayElData.charAt(0).toUpperCase();
+        const restOfString = weekDayElData.slice(1);
+        weekDayElData = firstLetter + restOfString;
+        weekdayEl.textContent = weekDayElData
+        timeDataContainer.appendChild(weekdayEl);
+
+        const dateEl = document.createElement("p");
+        dateEl.className = "screeningDate";
+        let dateElData = screeningDate.toLocaleDateString("da-DK", {
+            day: "numeric",
+            month: "numeric"
+        });
+        dateElData = dateElData.replace('.', '/');
+        dateEl.textContent = dateElData;
+        timeDataContainer.appendChild(dateEl);
         
 
-        const time = document.createElement("time");
-        time.textContent = new Date(date).toLocaleDateString("da-DK", {
-            weekday: "long",
-            day: "numeric",
-            month: "long"
-        });
-        timeColumn.appendChild(time);
-
-        /* const boxForTimes = document.createElement("div");
-        boxForTimes.className = "boxForTimes"; */
 
         screeningsForDate.forEach(s => {
             const timeBox = document.createElement("div");
@@ -481,25 +493,28 @@ function createScreeningSchedule(screenings) {
 
             const time = document.createElement("h4");
             time.className = "startTime";
+            let formatTime =  (s.startTime / 100).toFixed(2);
+            time.textContent = formatTime;
             timeBox.appendChild(time);
 
+
             const theaterName = document.createElement("p");
+            theaterName.textContent = s.theater.theaterName;
             timeBox.appendChild(theaterName);
 
               
 
-            //format time fra 1200 -> 12.00
-            let formatTime =  (s.startTime / 100).toFixed(2);
-
-            time.textContent = formatTime;
+            
 
             timeBox.addEventListener('click', () => {
-                //her tænker jeg at næste view bliver trigget?
-                //Brug s som parameter for at få screening objektet med, fx:
-                //     vic's Function(s)
-                
-                
+             selectedScreening = s;
+             console.log(selectedScreening);
 
+             closeView();
+             renderSeatsByScreening(s)
+
+             
+              
             })
 
         });
@@ -510,18 +525,118 @@ function createScreeningSchedule(screenings) {
 }
 
 async function fetchScreening(movieId){
-    screenings = await fetchAnyUrl(urlScreening + "/movie/" +  movieId);
+    screenings = await fetchAnyUrl(urlScreening + "/" +  movieId);
 
     try {
-        if(screenings && screenings.length > 0){
-            const movie = screenings[0].movie;
-            createScreeningSchedule(screenings);
-            createMoviePoster(movie);
-            console.log(screenings)
+        screenings = await fetchAnyUrl(urlScreening + "/movie/" + movieId);
+        createScreeningSchedule(screenings);
 
-        }
     } catch (err) {
         console.error(err);
     }
 
 }
+
+const confirmOrder = document.querySelector(".confirm-order");
+confirmOrder?.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const seatsToBook = Array.from(selectedSeatsMap.values());
+  const seatIds = seatsToBook.map(seat => seat.seatId);
+  const id = self.crypto.randomUUID();
+
+  const creds = Object.fromEntries(new FormData(createUser));
+  const userObj = {
+    firstName: creds.firstName,
+    lastName: creds.lastName,
+    age: creds.age,
+    number: creds.number
+  };
+
+  try {
+    const res = await postObjectAsJson(API_CUSTOMER, userObj, "POST");
+    if(!res.ok) {
+      alert("post virker ikke " + res.status);
+      return;
+    }
+
+    const response = await res.json();
+
+        const reservationObj = {
+        customerID: response.customerId,
+        screeningID: selectedScreening.screeningId,
+        seatId: seatIds,
+        userReservationId: id
+      };
+
+      const reservation = await postObjectAsJson(API_RESERVATION, reservationObj, "POST");
+      if(!reservation.ok) {
+        alert("Fejl i at sende info" + res.status);
+        return;
+      }
+
+
+      const bookingPayload = {
+        screeningId: selectedScreening.screeningId,
+        seatIds: seatIds
+      };
+
+    console.log(selectedScreening);
+
+    const seatBookingResponse = await postObjectAsJson(`${API_BASE}/bookedseats`,bookingPayload,"POST");      
+    if(!seatBookingResponse.ok) {
+      alert("Seat booking failed");
+      return;
+    }
+
+    const seatsInfo = Array.from(selectedSeatsMap.values())
+    const seatDetails = seatsInfo.map(seat => `Row: ${seat.seatRow}, Seat: ${seat.seatNumber}`).join(" | ");
+    const theaterName = seatsInfo[0]?.theater.theaterName || 'Unknown Theater';
+
+
+    selectedSeatsMap.clear();
+    test.classList.remove("active");
+
+
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const email = document.getElementById("email").value;
+      const number = document.getElementById("number").value;
+
+
+    const confirmation = `
+    <div class="confirmedFrame">
+      <div class="confirmed-section">
+       <div class="confirmed-box">
+        <div class="confirmed-header"><h1>Order confirmation</h1></div>
+        <div class="confirmed-text"><i class="fa-solid fa-check"></i></div>
+        <div class="confirmed-text"><p>Your order has been confirmed</p></div>
+        <div class="confirmex-text"><p style="text-align: center" class="cusomter-id">Rservation id: <br>${id}</p></div>
+        <div class="confirmed-text"><p class="customer-name">Name: ${firstName} ${lastName}</p></div>
+        <div class="confirmed-text"><p class="customer-email">Email: ${email}</p></div>
+        <div class="confirmed-text"><p class="customer-number">Number: ${number}</p></div>
+        <div class="confirmed-text"><p class="customer-theater">Theater: ${theaterName}</p></div>
+        <div class="confirmed-text"><p class="customer-movie">Movie: ${selectedScreening.movie.movieTitle}</p></div>
+        <div class="confirmed-text"><time datetime="2025-01-01">Date: ${selectedScreening.screeningDate} & Start time: ${selectedScreening.startTime}</time></div>
+        <div class="confirmed-text"><p class="customer-seats">Booked seats: ${seatDetails}</p></div>
+        </div>
+    </div>
+    </div>
+  `;
+
+      document.body.insertAdjacentHTML("beforeend", confirmation);
+
+      const orderConfirmed = document.querySelector(".confirmed-section");
+      orderConfirmed.classList.add("active");
+
+  } catch (err) {
+    console.error(err);
+  }
+
+});
+
+
+
+
+
+
