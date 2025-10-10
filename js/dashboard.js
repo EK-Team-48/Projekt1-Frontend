@@ -130,7 +130,9 @@ function fetchScreenings() {
 }
 
 function viewReservations() {
-
+    closeView();
+    fetchEmployees();
+    reservationsContent.innerHTML = "test";
 }
 
 function fetchReservations() {
@@ -184,6 +186,52 @@ async function fetchEmployees() {
     })
 
 }
+
+
+const addEmployee = document.querySelector("#addEmployeeBtn");
+addEmployee.addEventListener("click", openAddEmployee);
+
+function openAddEmployee() {
+  const addEmployeeFrame = document.querySelector('.addEmployeeFrame');
+  addEmployeeFrame.classList.add('active');
+
+  const form = document.querySelector('.addEmployee-form');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const employeeData = {
+      employeeName: formData.get('employeeName'),
+      employeePassword: formData.get("employeePassowrd"),
+      employeeType: formData.get('employeeType'),
+      employeeCreatedDate: new Date().toISOString().slice(0, 10)
+    };
+
+    console.log(employeeData);
+
+    try {
+      const response = await fetch(`${API_BASE}/employee`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(employeeData)
+      });
+
+      if (response.ok) {
+        addEmployeeFrame.classList.remove('active');
+        form.reset();
+        fetchEmployees();
+      } else {
+        alert('Failed to add employee');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error adding employee');
+    }
+  });
+}
+
 
 
 
