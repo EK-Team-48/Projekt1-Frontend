@@ -87,10 +87,75 @@ document.addEventListener('DOMContentLoaded', () => {
             adminContentTheaterElement.appendChild(button);
             console.log(t);
         })
+        adminContentMovieElement.appendChild(button);
+    })
 
-        console.log(theaterContent);
 
-    }
+}
+
+function viewScreenings() {
+
+}
+
+function fetchScreenings() {
+
+}
+
+function viewReservations() {
+
+}
+
+function fetchReservations() {
+
+}
+
+function viewEmployees() {
+    closeView();
+    fetchEmployees();
+    employeeFrame.style.display = 'flex';
+}
+
+async function fetchEmployees() {
+
+    const adminContentContainer = employeeFrame.querySelector('.adminContent');
+
+    adminContentContainer.innerHTML = '';
+    employeeContent = await fetchAnyUrl(`${API_BASE}/employee`);
+
+    employeeContent.forEach((employee) => {
+        console.log(employee);
+
+
+        const adminContentEmployeeElement = document.createElement('div');
+        adminContentEmployeeElement.className = "adminContentEmployeeElement";
+        adminContentContainer.appendChild(adminContentEmployeeElement);
+
+        const title = document.createElement('h2');
+        title.textContent = "Name: " + employee.employeeName;
+        const role = document.createElement('p');   
+        role.textContent = "Role: " + employee.employeeType;
+        const createdDate = document.createElement('time')
+        createdDate.textContent = "Created date: " + employee.employeeCreatedDate;
+        adminContentEmployeeElement.appendChild(title);
+        adminContentEmployeeElement.appendChild(role);
+        adminContentEmployeeElement.appendChild(createdDate);
+
+
+        const button = document.createElement('button');
+        button.textContent = 'Delete';
+        button.className = 'adminButton delete';
+        button.addEventListener('click', async () => {
+            const reservation = await postObjectAsJson(`${API_BASE}/employee/${employee.employeeId}`, employee.employeeId,"DELETE");
+            if (!reservation.ok) {
+                alert("Fejl i at sende info" + res.status);
+                return;
+            }
+            alert(`${employee.employeeName} has been deleted`);
+        })
+        adminContentEmployeeElement.appendChild(button);
+    })
+
+}
 
     function viewMovies () {
         closeView();
