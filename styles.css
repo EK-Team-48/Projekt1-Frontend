@@ -567,7 +567,7 @@ input[type="number"]::-webkit-outer-spin-button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   color: var(--text-secondary);
   margin-right: 1em;
   margin-top: 2em;
