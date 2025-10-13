@@ -39,81 +39,53 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-function closeView() {
-    theaterFrame.style.display = 'none';
-    movieFrame.style.display = 'none';
-    screeningsFrame.style.display = 'none';
-    reservationsFrame.style.display = 'none';
-    employeeFrame.style.display = 'none';
-}
+    function closeView() {
+        theaterFrame.style.display = 'none';
+        movieFrame.style.display = 'none';
+        screeningsFrame.style.display = 'none';
+        reservationsFrame.style.display = 'none';
+        employeeFrame.style.display = 'none';
+    }
 
 
-function viewTheaters() {
-    closeView();
-    fetchTheaters();
-    theaterFrame.style.display = 'flex';
-}
+    function viewTheaters() {
+        closeView();
+        fetchTheaters();
+        theaterFrame.style.display = 'flex';
+    }
 
-async function fetchTheaters() {
-    const theaterContentContainer = theaterFrame.querySelector('.adminContent');
+    async function fetchTheaters() {
+        const theaterContentContainer = theaterFrame.querySelector('.adminContent');
 
-    theaterContentContainer.innerHTML = '';
+        theaterContentContainer.innerHTML = '';
 
-    theaterContent = await fetchAnyUrl(`${API_BASE}/theaters`);
+        theaterContent = await fetchAnyUrl(`${API_BASE}/theaters`);
 
-    theaterContent.forEach((t) => {
+        theaterContent.forEach((t) => {
+            
+            const adminContentTheaterElement = document.createElement('div');
+            adminContentTheaterElement.className = "adminContentTheaterElement";
+            theaterContentContainer.appendChild(adminContentTheaterElement);
 
-        const adminContentTheaterElement = document.createElement('div');
-        adminContentTheaterElement.className = "adminContentTheaterElement";
-        theaterContentContainer.appendChild(adminContentTheaterElement);
+            const title = document.createElement('h2');
+            title.textContent = t.theaterName;
+            adminContentTheaterElement.appendChild(title);
 
-        const title = document.createElement('h2');
-        title.textContent = t.theaterName;
-        adminContentTheaterElement.appendChild(title);
-
-        const button = document.createElement('button');
-        button.textContent = 'Delete';
-        button.className = 'adminButton delete';
-        button.addEventListener('click', () => {
-            //Delete Request
-        })
-        adminContentTheaterElement.appendChild(button);
-        console.log(t);
-    })
-
-    console.log(theaterContent);
-
-}
-
-function viewMovies() {
-    closeView();
-    fetchMovies();
-    movieFrame.style.display = 'flex';
-}
-
-async function fetchMovies() {
-    const movieContentContainer = movieFrame.querySelector('.adminContent');
-
-    movieContentContainer.innerHTML = '';
-    movieContent = await fetchAnyUrl(`${API_BASE}/movies`);
-
-    movieContent.forEach((movie) => {
-        console.log(movie);
-
-
-        const adminContentMovieElement = document.createElement('div');
-        adminContentMovieElement.className = "adminContentMovieElement";
-        movieContentContainer.appendChild(adminContentMovieElement);
-
-        const title = document.createElement('h2');
-        title.textContent = movie.movieTitle;
-        adminContentMovieElement.appendChild(title);
-
-        const button = document.createElement('button');
-        button.textContent = 'Delete';
-        button.className = 'adminButton delete';
-        button.addEventListener('click', () => {
-            //Delete Request
+            const button = document.createElement('button');
+            button.textContent = 'Delete';
+            button.className = 'adminButton delete';
+            button.addEventListener('click', async () => {
+                const response = await postObjectAsJson(`${API_BASE}/theaters/${t.theaterId}`, null, "DELETE");
+                if (response && (response.status === 200 || response.status === 204 || response.ok)) {
+                    await fetchTheaters(); 
+                } else {
+                    console.error("Failed to delete theater:", response);
+                    alert(`Error: Could not delete ${t.theaterName}. Check console.`);
+                }
+                
+            })
+            adminContentTheaterElement.appendChild(button);
+            console.log(t);
         })
         adminContentMovieElement.appendChild(button);
     })
@@ -185,5 +157,65 @@ async function fetchEmployees() {
 
 }
 
+    function viewMovies () {
+        closeView();
+        fetchMovies();
+        movieFrame.style.display = 'flex';
+    }
+
+    async function fetchMovies() {
+        const movieContentContainer = movieFrame.querySelector('.adminContent');
+
+        movieContentContainer.innerHTML = '';
+        movieContent = await fetchAnyUrl(`${API_BASE}/movies`);
+
+        movieContent.forEach((movie) => {
+            console.log(movie);
+
+            
+            const adminContentMovieElement = document.createElement('div');
+            adminContentMovieElement.className = "adminContentMovieElement";
+            movieContentContainer.appendChild(adminContentMovieElement);
+
+            const title = document.createElement('h2');
+            title.textContent = movie.movieTitle;
+            adminContentMovieElement.appendChild(title);
+
+            const button = document.createElement('button');
+            button.textContent = 'Delete';
+            button.className = 'adminButton delete';
+            button.addEventListener('click', () => {
+                //Delete Request
+            })
+            adminContentMovieElement.appendChild(button);
+        })
+
+
+    }
+
+    function viewScreenings() {
+
+    }
+
+    function fetchScreenings() {
+
+    }
+
+    function viewReservations() {
+
+    }
+
+    function fetchReservations() {
+
+    }
+
+    function viewEmployees() {
+
+    }
+
+    function fetchEmployees() {
+
+    }
+    
 
 

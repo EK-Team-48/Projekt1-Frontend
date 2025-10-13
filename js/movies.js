@@ -11,7 +11,7 @@ let screenings = [];
 let seats;
 let bookedSeats;
 let selectedScreening = null;
-let container, modal, modal2, modal3, titleEl, genresEl, descEl, trailerContainer, 
+let container, modal, modal2, titleEl, genresEl, descEl, trailerContainer, 
 timeSelectionFrame, timeColumnContainer, timeSelectionFrameContent, movieDetailsContent, 
 bookBtn, price, tickets, confirmButton, movieContainer, 
 background, genre, search, createUser, test, checkoutButton, checkoutFrame;
@@ -289,8 +289,9 @@ async function handleConfirmClick() {
 
 
 async function renderSeatsByScreening(screening) {
+  console.log("Selected: " + screening.screeningId)
   const seatContainer = document.querySelector(".seatContainer");
-  seats = await fetchAnyUrl(`${API_BASE}/seats/${screening.theater.id}`);
+  seats = await fetchAnyUrl(`${API_BASE}/seats/${screening.theater.theaterId}`);
   bookedSeats = await fetchAnyUrl(`${API_BASE}/bookedseats/${screening.screeningId}`)
 
   const bookedSeatsIds = new Set(bookedSeats.map(seat => seat.seatId));
@@ -343,8 +344,8 @@ async function renderSeatsByScreening(screening) {
       el.dataset.seatId = seat.seatId;
       el.dataset.seatRow = seat.seatRow;
       el.dataset.seatNumber = seat.seatNumber;
-      el.dataset.theaterId = seat.theater.id;
-      el.dataset.theaterName = seat.theater.theaterName;
+      /* el.dataset.theaterId = seat.theater.theaterId; */
+      /* el.dataset.theaterName = seat.theater.theaterName; */
 
       const isBooked = bookedSeatsIds.has(seat.seatId);
       if(isBooked) {
@@ -499,7 +500,7 @@ function createScreeningSchedule(screenings) {
 
 
             const theaterName = document.createElement("p");
-            theaterName.textContent = s.theater.theaterName;
+            console.log(s);
             timeBox.appendChild(theaterName);
 
               
@@ -615,7 +616,7 @@ confirmOrder?.addEventListener("click", async (e) => {
         <div class="confirmed-text"><p class="customer-name">Name: ${firstName} ${lastName}</p></div>
         <div class="confirmed-text"><p class="customer-email">Email: ${email}</p></div>
         <div class="confirmed-text"><p class="customer-number">Number: ${number}</p></div>
-        <div class="confirmed-text"><p class="customer-theater">Theater: ${theaterName}</p></div>
+        <div class="confirmed-text"><p class="customer-theater">Theater: ${selectedScreening.theater.theaterName}</p></div>
         <div class="confirmed-text"><p class="customer-movie">Movie: ${selectedScreening.movie.movieTitle}</p></div>
         <div class="confirmed-text"><time datetime="2025-01-01">Date: ${selectedScreening.screeningDate} & Start time: ${selectedScreening.startTime}</time></div>
         <div class="confirmed-text"><p class="customer-seats">Booked seats: ${seatDetails}</p></div>
