@@ -13,7 +13,6 @@ const postScreeningUrl = "http://localhost:8080/api/v1/screenings"
 let allMoviesInSystem, allScreenings, allTheaters;
 
 let createScreeningContainer = document.querySelector(".createScreeningContainer"); 
-let displayScreeningsContainer = document.querySelector(".displayScreeningsContainer")
 let tableScreening = document.querySelector(".screeningTable");
 
 async function fetchAllMoviesAndTheaters(){
@@ -147,10 +146,8 @@ function createNewScreening(movies, theaters){
 async function fetchAllScreenings(){
     allScreenings = await fetchAnyUrl("http://localhost:8080/api/v1/screenings");
     if(allScreenings && allScreenings.length > 0){
-        displayScreeningsContainer.innerHTML = "Screenings:";
         allScreenings.forEach(displayAllScreenings)
     } else{
-         displayScreeningsContainer.innerHTML = "No screenings found";
     }
 
 }
@@ -191,7 +188,7 @@ function displayAllScreenings(screenings){
     const updateScreening = document.createElement("input");
     updateScreening.type="button";
     updateScreening.setAttribute("Value", "update screening");
-    updateScreening.className = "updateButton";
+    updateScreening.className = "adminButton grey";
     cell.appendChild(updateScreening);
 
     updateScreening.onclick = function(){
@@ -201,7 +198,7 @@ function displayAllScreenings(screenings){
     cell = row.insertCell(cellCount++);
     const deleteScrenning = document.createElement("input");
     deleteScrenning.type="button";
-    deleteScrenning.className="deleteButton";
+    deleteScrenning.className="adminButton delete";
     deleteScrenning.setAttribute("Value", "remove screening")
     cell.appendChild(deleteScrenning);
 
