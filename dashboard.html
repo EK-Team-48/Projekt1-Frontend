@@ -50,25 +50,15 @@
         <!-- MOVIES -->
          <div class="adminContentFrame" id="movieFrame">
             <h1 id="adminContentTitle">MOVIES</h1>
+             <div class="filter">
+                 <input type="text" id="search" placeholder="Search movies...">
+             </div>
             <div class="adminButtonContainer">
-                <button class="adminButton">New Movie</button>
-                <button class="adminButton grey">Edit Example Button</button>
-                <button class="adminButton delete">Delete Example Button</button>
+                <button class="adminButton" id="addMovieBtn">New Movie</button>
+                <button class="adminButton grey" id="manageGenres">Manage Genres</button>
+                <button class="adminButton grey" id="manageAgeLimits">Manage Age Limits</button>
             </div>
-            <div class="adminContent">
-                <div class="adminContentTheaterElement">
-                    <h2>Main Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>VIP Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>Example 1</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-
+            <div class="movieHandlerBoxContainer">
             </div>
         </div>
 
@@ -148,5 +138,6 @@
     
 
     <script type="module" src="js/dashboard.js"></script>
+    <script type="module" src="js/movieHandler.js"></script>
 </body>
 </html>

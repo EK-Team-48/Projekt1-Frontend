@@ -567,7 +567,7 @@ input[type="number"]::-webkit-outer-spin-button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   color: var(--text-secondary);
   margin-right: 1em;
   margin-top: 2em;
@@ -936,11 +936,11 @@ input[type="number"]::-webkit-outer-spin-button {
     -ms-overflow-style: none;
 }
 
-.adminContentScreenings {
-    scrollbar-width: none;
+adminContent::-webkit-scrollbar {
+    display: none;
 }
 
-.adminContentScreenings h2 {
+.adminContent h2 {
   margin: 0;
   transition: .3s;
   cursor: pointer;
@@ -960,6 +960,7 @@ input[type="number"]::-webkit-outer-spin-button {
   display: flex;
   justify-content: space-between;
 }
+
 
 #theaterFrame {
   display: none;
