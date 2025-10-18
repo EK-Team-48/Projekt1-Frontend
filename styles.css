@@ -570,7 +570,7 @@ input[type="number"]::-webkit-outer-spin-button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   color: var(--text-secondary);
   margin-right: 1em;
   margin-top: 2em;
@@ -922,6 +922,26 @@ input[type="number"]::-webkit-outer-spin-button {
   justify-self: center;
 }
 
+.adminContentScreenings {
+  display: flex;
+  left: 15%;
+  flex-direction: column;
+  gap: 3em;
+  justify-self: center;
+  overflow: scroll;
+}
+.adminContentScreenings::-webkit-scrollbar {
+    display: none;
+}
+
+.adminContentScreenings {
+    -ms-overflow-style: none;
+}
+
+adminContent::-webkit-scrollbar {
+    display: none;
+}
+
 .adminContent h2 {
   margin: 0;
   transition: .3s;
@@ -942,6 +962,7 @@ input[type="number"]::-webkit-outer-spin-button {
   display: flex;
   justify-content: space-between;
 }
+
 
 #theaterFrame {
   display: none;
@@ -1120,66 +1141,6 @@ Movie handler sektion. Til at tilføje, redigere og slette film
 Movie handler sektion slut
  */
 
-/* Container til hele create-screening sektionen */
-.createScreeningContainer {
-  background: linear-gradient(135deg, #1c1f26, #2b2f3a);
-  padding: 2rem;
-  border-radius: 1rem;
-  max-width: 700px;
-  margin: 2rem auto;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  color: #f1f1f1;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* Formular til oprettelse af ny screening */
-.createScreeningContainer form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-
-/* Labels */
-.createScreeningContainer label {
-  font-weight: bold;
-  margin-bottom: 0.3rem;
-  font-size: 1rem;
-}
-
-/* Dropdowns og inputs */
-.createScreeningContainer select,
-.createScreeningContainer input {
-  padding: 0.6rem;
-  font-size: 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid #555;
-  background-color: #2f3340;
-  color: #f1f1f1;
-  outline: none;
-  transition: border 0.2s ease;
-}
-
-.createScreeningContainer select:focus,
-.createScreeningContainer input:focus {
-  border: 1px solid #6a9df8;
-}
-
-/* Submit-knap */
-.createScreeningContainer button[type="submit"] {
-  padding: 0.8rem;
-  background: linear-gradient(90deg, #3a7bd5, #3a6073);
-  color: #fff;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.3s;
-}
-
-.createScreeningContainer button[type="submit"]:hover {
-  background: linear-gradient(90deg, #4a90e2, #354b65);
-  transform: translateY(-2px);
-}
 
 /* Container til visning af screenings */
 .displayScreeningsContainer {
