@@ -1,66 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <!-- <div class="background"> -->
-        <div class="dashboardFrame">
-            <div class="dashboardTitleContainer">
-                <h3>ADMIN</h3>
-                <h1>DASHBOARD</h1> 
-            </div>
-            <div class="dashboardCategories">
-                <h4 id="dashboardTheaters">Theaters</h4>
-                <h4 id="dashboardMovies">Movies</h4>
-                <h4 id="dashboardScreenings">Screenings</h4>
-                <h4 id="dashboardReservations">Reservations</h4>
-                <h4 id="dashboardEmployees">Employees</h4>
-            </div>
+    <div class="dashboardFrame">
+        <div class="dashboardTitleContainer">
+            <h3>ADMIN</h3>
+            <h1>DASHBOARD</h1>
         </div>
-
-        <!-- THEATERS -->
-        <div class="adminContentFrame" id="theaterFrame">
-            <h1 id="adminContentTitle">THEATERS</h1>
-            <div class="adminButtonContainer">
-                <button class="adminButton">New Theater</button>
-                <button class="adminButton grey">Edit Example Button</button>
-                <button class="adminButton delete">Delete Example Button</button>
-            </div>
-            <div class="adminContent">
-                <div class="adminContentTheaterElement">
-                    <h2>Main Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>VIP Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>Example 1</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-
-            </div>
+        <div class="dashboardCategories">
+            <h4 id="dashboardTheaters">Theaters</h4>
+            <h4 id="dashboardMovies">Movies</h4>
+            <h4 id="dashboardScreenings">Screenings</h4>
+            <h4 id="dashboardReservations">Reservations</h4>
+            <h4 id="dashboardEmployees">Employees</h4>
         </div>
+    </div>
 
-        <!-- MOVIES -->
-         <div class="adminContentFrame" id="movieFrame">
-            <h1 id="adminContentTitle">MOVIES</h1>
-             <div class="filter">
-                 <input type="text" id="search" placeholder="Search movies...">
-             </div>
-            <div class="adminButtonContainer">
-                <button class="adminButton" id="addMovieBtn">New Movie</button>
-                <button class="adminButton grey" id="manageGenres">Manage Genres</button>
-                <button class="adminButton grey" id="manageAgeLimits">Manage Age Limits</button>
-            </div>
-            <div class="movieHandlerBoxContainer">
-            </div>
+    <!-- THEATERS -->
+    <div class="adminContentFrame" id="theaterFrame">
+        <h1 id="adminContentTitle">THEATERS</h1>
+        <div class="adminButtonContainer">
+            <button class="adminButton">New Theater</button>
+            <button class="adminButton grey">Edit Example Button</button>
+            <button class="adminButton delete">Delete Example Button</button>
         </div>
+        <div class="adminContent">
+            <div class="adminContentTheaterElement">
+                <h2>Main Lounge</h2>
+                <button class="adminButton delete">Delete</button>
+            </div>
+            <div class="adminContentTheaterElement">
+                <h2>VIP Lounge</h2>
+                <button class="adminButton delete">Delete</button>
+            </div>
+            <div class="adminContentTheaterElement">
+                <h2>Example 1</h2>
+                <button class="adminButton delete">Delete</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MOVIES -->
+    <div class="adminContentFrame" id="movieFrame">
+        <h1 id="adminContentTitle">MOVIES</h1>
+        <div class="filter">
+            <input type="text" id="search" placeholder="Search movies...">
+        </div>
+        <div class="adminButtonContainer">
+            <button class="adminButton" id="addMovieBtn">New Movie</button>
+            <button class="adminButton grey" id="manageGenres">Manage Genres</button>
+            <button class="adminButton grey" id="manageAgeLimits">Manage Age Limits</button>
+        </div>
+        <div class="movieHandlerBoxContainer">
+        </div>
+    </div>
 
         <!-- SCREENINGS -->
          <div class="adminContentFrame" id="screeningsFrame">
@@ -84,60 +86,74 @@
             </table>
 
             </div>
+            <div class="adminContentTheaterElement">
+                <h2>Example 1</h2>
+                <button class="adminButton delete">Delete</button>
+            </div>
+
         </div>
+    </div>
 
-        <!-- RESERVATIONS -->
-         <div class="adminContentFrame" id="reservationsFrame">
-            <h1 id="adminContentTitle">RESERVATIONS</h1>
-            <div class="adminButtonContainer">
-                <button class="adminButton">New Theater</button>
-                <button class="adminButton grey">Edit Example Button</button>
-                <button class="adminButton delete">Delete Example Button</button>
-            </div>
-            <div class="adminContent">
-                <div class="adminContentTheaterElement">
-                    <h2>Main Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>VIP Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>Example 1</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
+    <!-- RESERVATIONS -->
+    <div class="adminContentFrame" id="reservationsFrame">
+        <h1 id="adminContentTitle">RESERVATIONS</h1>
+        <div class="adminButtonContainer">
+            <button class="adminButton" id="findReservationBtn">Find Reservation</button></div>
+        <div class="adminContent">
+            <div class="adminContentTheaterElement"></div>
+            <div class="adminContentTheaterElement"></div>
+            <div class="adminContentTheaterElement"></div>
+        </div>
+    </div>
 
+    <!-- EMPLOYEES -->
+    <div class="adminContentFrame" id="employeeFrame">
+        <h1 id="adminContentTitle">EMPLOYEES</h1>
+        <div class="adminButtonContainer">
+            <button class="adminButton" id="addEmployeeBtn">Add Employee</button>
+            <button class="adminButton grey">Edit Employee Button</button>
+        </div>
+        <div class="adminContent">
+            <div class="adminContentTheaterElement">
+
+        </div>
+    </div>
+
+    <div class="addEmployeeFrame">
+        <div class="addEmployee-section">
+            <div class="addEmployee-box">
+                <h1>Add Employee</h1>
+                <form class="addEmployee-form">
+                    <div class="form-section">
+                        <input type="text" id="employeeName" name="employeeName" placeholder="Employee Name" required>
+                        <input type="password" name="employeePassword" id="employeePassword" placeholder="Insert Employee Password">
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" name="employeeType" id="employeeType" value="ADMIN">
+                                <label for="employeeType">Admin</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="manager" name="employeeType" value="MANAGER" required>
+                                <label for="manager">Manager</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="employee" name="employeeType" value="EMPLOYEE" required>
+                                <label for="employee">Employee</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="submit-box">
+                        <button type="submit" class="adminButton">Add Employee</button>
+                        <button type="click" class="adminButton close-btn">Close</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-        <!-- EMPLOYEES -->
-         <div class="adminContentFrame" id="employeeFrame">
-            <h1 id="adminContentTitle">EMPLOYEES</h1>
-            <div class="adminButtonContainer">
-                <button class="adminButton">New Theater</button>
-                <button class="adminButton grey">Edit Example Button</button>
-                <button class="adminButton delete">Delete Example Button</button>
-            </div>
-            <div class="adminContent">
-                <div class="adminContentTheaterElement">
-                    <h2>Main Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>VIP Lounge</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-                <div class="adminContentTheaterElement">
-                    <h2>Example 1</h2>
-                    <button class="adminButton delete">Delete</button>
-                </div>
-
-            </div>
-        </div>
-    
 
     <script type="module" src="js/dashboard.js"></script>
     <script type="module" src="js/movieHandler.js"></script>
 </body>
+
 </html>
