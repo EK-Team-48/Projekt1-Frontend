@@ -129,14 +129,131 @@ function fetchScreenings() {
 
 }
 
-function viewReservations() {
+ function viewReservations() {
     closeView();
-    fetchEmployees();
-    reservationsContent.innerHTML = "test";
+    fetchReservations();
+    reservationsFrame.style.display = 'flex';
 }
 
-function fetchReservations() {
+async function fetchReservations() {
+    const adminContentContainer = reservationsFrame.querySelector('.adminContent');
 
+    adminContentContainer.innerHTML = '';
+    reservationsContent = await fetchAnyUrl(`${API_BASE}/reservations`);
+
+    reservationsContent.forEach((reservation) => {
+        const adminContentReservationElement = document.createElement('div');
+        adminContentReservationElement.className = "adminContentReservationElement";
+        adminContentContainer.appendChild(adminContentReservationElement);
+
+        const title = document.createElement('h2');
+        const fullID = reservation.reservationID;
+        const idLastFour = fullID.substring(fullID.length - 4);
+        title.textContent = "Reservation ID: " + idLastFour;
+        title.style.cursor = 'pointer';
+        
+        const date = document.createElement('time');
+        date.textContent = "Date: " + reservation.screeningDate;
+        
+        adminContentReservationElement.appendChild(title);
+        adminContentReservationElement.appendChild(date);
+
+        title.addEventListener('click', () => openReservationDetails(reservation));
+
+        const button = document.createElement('button');
+        button.textContent = 'Delete';
+        button.className = 'reservation-delete-btn';
+        button.addEventListener('click', async () => {
+            const response = await postObjectAsJson(`${API_BASE}/reservations/${idLastFour}`, idLastFour, "DELETE");
+            if (!response.ok) {
+                alert("Failed to delete reservation: " + response.status);
+                return;
+            }
+            alert(`Reservation ${reservation.reservationID} has been deleted`);
+            fetchReservations();
+        });
+        adminContentReservationElement.appendChild(button);
+    });
+}
+
+function openReservationDetails(reservation) {
+    const popup = document.createElement('div');
+    popup.className = 'reservationPopup';
+    
+    popup.innerHTML = `
+        <div class="reservationDetails-section">
+            <div class="reservationDetails-box">
+                <h2>Reservation Details</h2>
+                <div class="details-content">
+                    <p><strong>Reservation ID:</strong> ${reservation.reservationID}</p>
+                    <p><strong>Customer Name:</strong> ${reservation.firstName} ${reservation.lastName}</p>
+                    <p><strong>Customer Number:</strong> ${reservation.phoneNumber}</p>
+                    <p><strong>Movie:</strong> ${reservation.movieTitle}</p>
+                    <p><strong>Date:</strong> ${reservation.screeningDate}</p>
+                    <p><strong>Seats:</strong> ${reservation.seats.map(seat => `Row ${seat.row}, Seat ${seat.number}`).join(', ')}</p>
+                </div>
+                <button class="adminButton close-btn">Close</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    const closeBtn = popup.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => popup.remove());
+}
+
+const findReservationBtn = document.querySelector("#findReservationBtn");
+findReservationBtn?.addEventListener("click", openFindReservation);
+
+function openFindReservation() {
+    const popup = document.createElement('div');
+    popup.className = 'findReservationPopup';
+    
+    popup.innerHTML = `
+        <div class="findReservation-section">
+            <div class="findReservation-box">
+                <h2>Find Reservation</h2>
+                <form class="findReservation-form">
+                    <input type="text" 
+                           id="reservationId" 
+                           name="reservationId" 
+                           placeholder="Enter 4-digit reservation code"
+                           pattern="{4}"
+                           maxlength="4"
+                           required>
+                    <div class="button-group">
+                        <button type="submit" class="adminButton">Find</button>
+                        <button type="button" class="adminButton close-btn">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    const closeBtn = popup.querySelector('.close-btn');
+    closeBtn.addEventListener('click', () => popup.remove());
+
+    const form = popup.querySelector('.findReservation-form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = form.reservationId.value;
+        
+        try {
+            const reservation = await fetchAnyUrl(`${API_BASE}/reservations/${id}`);
+            if (reservation) {
+                popup.remove();
+                openReservationDetails(reservation);
+            } else {
+                alert('Reservation not found');
+            }
+        } catch (error) {
+            alert('Error finding reservation');
+            console.error(error);
+        }
+    });
 }
 
 function viewEmployees() {
@@ -173,7 +290,7 @@ async function fetchEmployees() {
 
         const button = document.createElement('button');
         button.textContent = 'Delete';
-        button.className = 'adminButton delete';
+        button.className = 'reservation-delete-btn';
         button.addEventListener('click', async () => {
             const reservation = await postObjectAsJson(`${API_BASE}/employee/${employee.employeeId}`, employee.employeeId,"DELETE");
             if (!reservation.ok) {
@@ -181,6 +298,7 @@ async function fetchEmployees() {
                 return;
             }
             alert(`${employee.employeeName} has been deleted`);
+            fetchEmployees();
         })
         adminContentEmployeeElement.appendChild(button);
     })
@@ -193,6 +311,13 @@ addEmployee.addEventListener("click", openAddEmployee);
 
 function openAddEmployee() {
   const addEmployeeFrame = document.querySelector('.addEmployeeFrame');
+  const closeBtn = addEmployeeFrame.querySelector('.close-btn');
+
+      closeBtn.addEventListener('click', () => {
+        addEmployeeFrame.classList.remove('active');
+        document.querySelector('.addEmployee-form').reset();
+    });
+
   addEmployeeFrame.classList.add('active');
 
   const form = document.querySelector('.addEmployee-form');
