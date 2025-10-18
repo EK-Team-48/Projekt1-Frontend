@@ -1363,11 +1363,18 @@ Movie handler sektion slut
 .reservation-delete-btn {
     margin: 1rem auto 0;
     display: block;
-    padding: 0.5rem 1rem;
     background-color: #FB9494;
-    border: none;
-    border-radius: 4px;
+    padding: .75em 1.5em;
+    outline: none;
+    text-decoration: none;
+    border-radius: .75em;
+    color: var(--background-primary);
+    font-family: 'Inter';
+    font-weight: bold;
     cursor: pointer;
+    border: none;
+    box-sizing: border-box;
+    transition: .3s
 }
 
 .reservation-delete-btn:hover {
