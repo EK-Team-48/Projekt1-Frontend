@@ -39,60 +39,60 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 
-    function closeView() {
-        theaterFrame.style.display = 'none';
-        movieFrame.style.display = 'none';
-        screeningsFrame.style.display = 'none';
-        reservationsFrame.style.display = 'none';
-        employeeFrame.style.display = 'none';
-    }
+function closeView() {
+    theaterFrame.style.display = 'none';
+    movieFrame.style.display = 'none';
+    screeningsFrame.style.display = 'none';
+    reservationsFrame.style.display = 'none';
+    employeeFrame.style.display = 'none';
+}
 
 
-    function viewTheaters() {
-        closeView();
-        fetchTheaters();
-        theaterFrame.style.display = 'flex';
-    }
+function viewTheaters() {
+    closeView();
+    fetchTheaters();
+    theaterFrame.style.display = 'flex';
+}
 
-    async function fetchTheaters() {
-        const theaterContentContainer = theaterFrame.querySelector('.adminContent');
+async function fetchTheaters() {
+    const theaterContentContainer = theaterFrame.querySelector('.adminContent');
 
-        theaterContentContainer.innerHTML = '';
+    theaterContentContainer.innerHTML = '';
 
-        theaterContent = await fetchAnyUrl(`${API_BASE}/theaters`);
+    theaterContent = await fetchAnyUrl(`${API_BASE}/theaters`);
 
-        theaterContent.forEach((t) => {
-            
-            const adminContentTheaterElement = document.createElement('div');
-            adminContentTheaterElement.className = "adminContentTheaterElement";
-            theaterContentContainer.appendChild(adminContentTheaterElement);
+    theaterContent.forEach((t) => {
 
-            const title = document.createElement('h2');
-            title.textContent = t.theaterName;
-            adminContentTheaterElement.appendChild(title);
+        const adminContentTheaterElement = document.createElement('div');
+        adminContentTheaterElement.className = "adminContentTheaterElement";
+        theaterContentContainer.appendChild(adminContentTheaterElement);
 
-            const button = document.createElement('button');
-            button.textContent = 'Delete';
-            button.className = 'adminButton delete';
-            button.addEventListener('click', async () => {
-                const response = await postObjectAsJson(`${API_BASE}/theaters/${t.theaterId}`, null, "DELETE");
-                if (response && (response.status === 200 || response.status === 204 || response.ok)) {
-                    await fetchTheaters(); 
-                } else {
-                    console.error("Failed to delete theater:", response);
-                    alert(`Error: Could not delete ${t.theaterName}. Check console.`);
-                }
-                
-            })
-            adminContentTheaterElement.appendChild(button);
-            console.log(t);
+        const title = document.createElement('h2');
+        title.textContent = t.theaterName;
+        adminContentTheaterElement.appendChild(title);
+
+        const button = document.createElement('button');
+        button.textContent = 'Delete';
+        button.className = 'adminButton delete';
+        button.addEventListener('click', async () => {
+            const response = await postObjectAsJson(`${API_BASE}/theaters/${t.theaterId}`, null, "DELETE");
+            if (response && (response.status === 200 || response.status === 204 || response.ok)) {
+                await fetchTheaters();
+            } else {
+                console.error("Failed to delete theater:", response);
+                alert(`Error: Could not delete ${t.theaterName}. Check console.`);
+            }
+
         })
-        adminContentMovieElement.appendChild(button);
-    }
+        adminContentTheaterElement.appendChild(button);
+        console.log(t);
+    })
+    adminContentMovieElement.appendChild(button);
+}
 
 
 
- function viewReservations() {
+function viewReservations() {
     closeView();
     fetchReservations();
     reservationsFrame.style.display = 'flex';
@@ -114,10 +114,10 @@ async function fetchReservations() {
         const idLastFour = fullID.substring(fullID.length - 4);
         title.textContent = "Reservation ID: " + idLastFour;
         title.style.cursor = 'pointer';
-        
+
         const date = document.createElement('time');
         date.textContent = "Date: " + reservation.screeningDate;
-        
+
         adminContentReservationElement.appendChild(title);
         adminContentReservationElement.appendChild(date);
 
@@ -142,7 +142,7 @@ async function fetchReservations() {
 function openReservationDetails(reservation) {
     const popup = document.createElement('div');
     popup.className = 'reservationPopup';
-    
+
     popup.innerHTML = `
         <div class="reservationDetails-section">
             <div class="reservationDetails-box">
@@ -155,15 +155,25 @@ function openReservationDetails(reservation) {
                     <p><strong>Date:</strong> ${reservation.screeningDate}</p>
                     <p><strong>Seats:</strong> ${reservation.seats.map(seat => `Row ${seat.row}, Seat ${seat.number}`).join(', ')}</p>
                 </div>
-                <button class="adminButton close-btn">Close</button>
             </div>
         </div>
     `;
 
     document.body.appendChild(popup);
 
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+            popup.remove();
+            document.removeEventListener('keydown', handleEsc);
+        }
+    };
+    document.addEventListener('keydown', handleEsc);
+
     const closeBtn = popup.querySelector('.close-btn');
-    closeBtn.addEventListener('click', () => popup.remove());
+    closeBtn.addEventListener('click', () => {
+        popup.remove();
+        document.removeEventListener('keydown', handleEsc);
+    });
 }
 
 const findReservationBtn = document.querySelector("#findReservationBtn");
@@ -172,7 +182,7 @@ findReservationBtn?.addEventListener("click", openFindReservation);
 function openFindReservation() {
     const popup = document.createElement('div');
     popup.className = 'findReservationPopup';
-    
+
     popup.innerHTML = `
         <div class="findReservation-section">
             <div class="findReservation-box">
@@ -187,7 +197,6 @@ function openFindReservation() {
                            required>
                     <div class="button-group">
                         <button type="submit" class="adminButton">Find</button>
-                        <button type="button" class="adminButton close-btn">Close</button>
                     </div>
                 </form>
             </div>
@@ -196,14 +205,25 @@ function openFindReservation() {
 
     document.body.appendChild(popup);
 
-    const closeBtn = popup.querySelector('.close-btn');
-    closeBtn.addEventListener('click', () => popup.remove());
+  const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+            popup.remove();
+            document.removeEventListener('keydown', handleEsc);
+        }
+    };
+    document.addEventListener('keydown', handleEsc);
+
+    popup.addEventListener('click', () => {
+        popup.remove();
+        document.removeEventListener('keydown', handleEsc);
+    });
+
 
     const form = popup.querySelector('.findReservation-form');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const id = form.reservationId.value;
-        
+
         try {
             const reservation = await fetchAnyUrl(`${API_BASE}/reservations/${id}`);
             if (reservation) {
@@ -242,7 +262,7 @@ async function fetchEmployees() {
 
         const title = document.createElement('h2');
         title.textContent = "Name: " + employee.employeeName;
-        const role = document.createElement('p');   
+        const role = document.createElement('p');
         role.textContent = "Role: " + employee.employeeType;
         const createdDate = document.createElement('time')
         createdDate.textContent = "Created date: " + employee.employeeCreatedDate;
@@ -255,7 +275,7 @@ async function fetchEmployees() {
         button.textContent = 'Delete';
         button.className = 'reservation-delete-btn';
         button.addEventListener('click', async () => {
-            const reservation = await postObjectAsJson(`${API_BASE}/employee/${employee.employeeId}`, employee.employeeId,"DELETE");
+            const reservation = await postObjectAsJson(`${API_BASE}/employee/${employee.employeeId}`, employee.employeeId, "DELETE");
             if (!reservation.ok) {
                 alert("Fejl i at sende info" + res.status);
                 return;
@@ -268,41 +288,41 @@ async function fetchEmployees() {
 
 }
 
-    function viewMovies () {
-        closeView();
-        fetchMovies();
-        movieFrame.style.display = 'flex';
-    }
+function viewMovies() {
+    closeView();
+    fetchMovies();
+    movieFrame.style.display = 'flex';
+}
 
-    async function fetchMovies() {
-        const movieContentContainer = movieFrame.querySelector('.adminContent');
+async function fetchMovies() {
+    const movieContentContainer = movieFrame.querySelector('.adminContent');
 
-        movieContentContainer.innerHTML = '';
-        movieContent = await fetchAnyUrl(`${API_BASE}/movies`);
+    movieContentContainer.innerHTML = '';
+    movieContent = await fetchAnyUrl(`${API_BASE}/movies`);
 
-        movieContent.forEach((movie) => {
-            console.log(movie);
+    movieContent.forEach((movie) => {
+        console.log(movie);
 
-            
-            const adminContentMovieElement = document.createElement('div');
-            adminContentMovieElement.className = "adminContentMovieElement";
-            movieContentContainer.appendChild(adminContentMovieElement);
 
-            const title = document.createElement('h2');
-            title.textContent = movie.movieTitle;
-            adminContentMovieElement.appendChild(title);
+        const adminContentMovieElement = document.createElement('div');
+        adminContentMovieElement.className = "adminContentMovieElement";
+        movieContentContainer.appendChild(adminContentMovieElement);
 
-            const button = document.createElement('button');
-            button.textContent = 'Delete';
-            button.className = 'adminButton delete';
-            button.addEventListener('click', () => {
-                //Delete Request
-            })
-            adminContentMovieElement.appendChild(button);
+        const title = document.createElement('h2');
+        title.textContent = movie.movieTitle;
+        adminContentMovieElement.appendChild(title);
+
+        const button = document.createElement('button');
+        button.textContent = 'Delete';
+        button.className = 'adminButton delete';
+        button.addEventListener('click', () => {
+            //Delete Request
         })
+        adminContentMovieElement.appendChild(button);
+    })
 
 
-    }
+}
 
 
 // Create new screenings: //
@@ -312,7 +332,7 @@ function viewScreenings() {
     //createScreeningContainer.style.display = "none";
     fetchAllScreenings();
     fetchAllMoviesAndTheaters();
-    
+
 }
 
 
@@ -320,55 +340,55 @@ function viewScreenings() {
 const postScreeningUrl = "http://localhost:8080/api/v1/screenings"
 let allMoviesInSystem, allScreenings, allTheaters;
 
-let createScreeningContainer = document.querySelector(".createScreeningContainer"); 
+let createScreeningContainer = document.querySelector(".createScreeningContainer");
 let tableScreening = document.querySelector(".screeningTable");
 let createScrButton = document.getElementById("adminButtonScreening");
 
 
-async function fetchAllMoviesAndTheaters(){
+async function fetchAllMoviesAndTheaters() {
     allMoviesInSystem = [];
     allTheaters = [];
     allMoviesInSystem = await fetchAnyUrl("http://localhost:8080/api/v1/movies");
     allTheaters = await fetchAnyUrl("http://localhost:8080/api/v1/theaters")
 
-    if(allMoviesInSystem && allTheaters){
-        
+    if (allMoviesInSystem && allTheaters) {
+
     } else {
         alert("fejl ved kald til movie og theaters backend url," + " vil du vide mere så kig i console")
     }
 }
-    
-createScrButton.addEventListener("click", () => {
-            createScreeningContainer.style.display = "flex";
-            createNewScreening(allMoviesInSystem, allTheaters);
-    })
 
-function createNewScreening(movies, theaters){
+createScrButton.addEventListener("click", () => {
+    createScreeningContainer.style.display = "flex";
+    createNewScreening(allMoviesInSystem, allTheaters);
+})
+
+function createNewScreening(movies, theaters) {
     createScreeningContainer.innerHTML = "";
 
-    if(!movies || movies.length === 0){
+    if (!movies || movies.length === 0) {
         createScreeningContainer.innerHTML = "Could not find any movies, create it before the screening";
         return
     }
-    if(!theaters || theaters.length === 0){
+    if (!theaters || theaters.length === 0) {
         createScreeningContainer.innerHTML = "could not find any theaters, create it before the screening"
         return
     }
 
-  
+
 
 
     const inputContainer = document.createElement("div");
-    inputContainer.className ="update-overlay";
+    inputContainer.className = "update-overlay";
 
     const popup = document.createElement("div");
     popup.className = "update-popup";
 
     const inputForm = document.createElement("form");
     inputForm.className = "update-form";
-    
+
     const movieLabel = document.createElement("label");
-    movieLabel.textContent = "Movie:"; 
+    movieLabel.textContent = "Movie:";
 
     const selectMovie = document.createElement("select");
     selectMovie.id = "selectMovie";
@@ -385,7 +405,7 @@ function createNewScreening(movies, theaters){
     theaterLabel.textContent = "Theater:";
 
     const selectTheater = document.createElement("select");
-    selectTheater.id= "selectTheater";
+    selectTheater.id = "selectTheater";
 
     theaters.forEach(theater => {
         const theaterOption = document.createElement("option");
@@ -396,16 +416,16 @@ function createNewScreening(movies, theaters){
 
     const screeningDateLabel = document.createElement("label");
     screeningDateLabel.textContent = "Date:";
-    screeningDateLabel.className="screeningDateLabel";
+    screeningDateLabel.className = "screeningDateLabel";
 
     const dateInput = document.createElement("input");
-    dateInput.id ="screeningDate";
-    dateInput.type="date";
+    dateInput.id = "screeningDate";
+    dateInput.type = "date";
     dateInput.required = true;
 
 
     const timeLabel = document.createElement("label");
-    timeLabel.textContent ="Time:";
+    timeLabel.textContent = "Time:";
 
     const timeInput = document.createElement("input");
     timeInput.type = "time"
@@ -417,20 +437,20 @@ function createNewScreening(movies, theaters){
     priceLabel.textContent = "Price:";
 
     const princeInput = document.createElement("input");
-    princeInput.type ="number";
+    princeInput.type = "number";
     princeInput.id = "price";
     princeInput.required = true;
     princeInput.min = 0;
 
     const submitScreeningButton = document.createElement("button");
     submitScreeningButton.type = "submit";
-    submitScreeningButton.textContent ="Create Screening";
+    submitScreeningButton.textContent = "Create Screening";
 
     const cancelButton = document.createElement("button");
     cancelButton.type = "button";
     cancelButton.textContent = "Cancel";
     cancelButton.onclick = () => document.body.removeChild(inputContainer);
-    
+
 
 
     inputForm.appendChild(movieLabel);
@@ -450,7 +470,7 @@ function createNewScreening(movies, theaters){
 
     inputForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const newScreening ={
+        const newScreening = {
             movieId: parseInt(selectMovie.value),
             screeningDate: dateInput.value,
             startTime: parseInt(timeInput.value.replace(":", "")),
@@ -463,7 +483,7 @@ function createNewScreening(movies, theaters){
         //createScreeningContainer.style.display = "none";
         document.body.removeChild(inputContainer);
 
-        
+
     })
 
     popup.appendChild(inputForm);
@@ -479,13 +499,13 @@ function createNewScreening(movies, theaters){
 
 
 
-async function fetchAllScreenings(){
-    clearScreeningsTable(); 
+async function fetchAllScreenings() {
+    clearScreeningsTable();
     allScreenings = await fetchAnyUrl("http://localhost:8080/api/v1/screenings");
 
-    if(allScreenings && allScreenings.length > 0){
+    if (allScreenings && allScreenings.length > 0) {
         allScreenings.forEach(displayAllScreenings)
-    } else{
+    } else {
     }
 
 }
@@ -497,12 +517,12 @@ function clearScreeningsTable() {
 }
 
 
-function displayAllScreenings(screenings){
-    if(!screenings){
+function displayAllScreenings(screenings) {
+    if (!screenings) {
         return
     }
 
-    
+
 
     let cellCount = 0;
     let rowCount = tableScreening.rows.length;
@@ -510,50 +530,50 @@ function displayAllScreenings(screenings){
 
     let cell = row.insertCell(cellCount++);
     cell.innerHTML = screenings.movie.movieTitle;
-    cell.style.width="25%";
+    cell.style.width = "25%";
 
     cell = row.insertCell(cellCount++);
     cell.innerHTML = screenings.theater.theaterName;
-    cell.style.width="25%";
+    cell.style.width = "25%";
 
     cell = row.insertCell(cellCount++);
     cell.innerHTML = screenings.screeningDate;
-    cell.style.width="25%";
+    cell.style.width = "25%";
 
     cell = row.insertCell(cellCount++);
     cell.innerHTML = formatTime(screenings.startTime);
-    cell.style.width="25%";
+    cell.style.width = "25%";
 
     cell = row.insertCell(cellCount++);
     cell.innerHTML = screenings.price + " kr";
-    cell.style.width="25%";
+    cell.style.width = "25%";
 
     cell = row.insertCell(cellCount++);
     const updateScreening = document.createElement("input");
-    updateScreening.type="button";
+    updateScreening.type = "button";
     updateScreening.setAttribute("Value", "update screening");
     updateScreening.className = "updateButton";
     cell.appendChild(updateScreening);
 
-    updateScreening.onclick = function(){
+    updateScreening.onclick = function () {
         row.remove();
         updateScreeningFunc(screenings);
     }
 
     cell = row.insertCell(cellCount++);
     const deleteScrenning = document.createElement("input");
-    deleteScrenning.type="button";
-    deleteScrenning.className="deleteButton";
+    deleteScrenning.type = "button";
+    deleteScrenning.className = "deleteButton";
     deleteScrenning.setAttribute("Value", "remove screening")
     cell.appendChild(deleteScrenning);
 
-    deleteScrenning.onclick = function(){
+    deleteScrenning.onclick = function () {
         row.remove();
         deleteScreeningFunc(screenings)
-        
+
     }
 
-   
+
 
 }
 // Laver tidspunkt fra 1230 til 12:30
@@ -563,17 +583,17 @@ function formatTime(num) {
 }
 
 
-async function deleteScreeningFunc(screening){
+async function deleteScreeningFunc(screening) {
     const screeningDeleted = `\n ${screening.movie.movieTitle} \n ${screening.theater.theaterName} \n ${screening.screeningDate} \n ${formatTime(screening.startTime)} \n ${screening.price} kr \n`;
-    try{
-    const delSrc = await postObjectAsJson(postScreeningUrl + "/" + screening.screeningId, screening, "DELETE");
-    if(!delSrc.ok){
-        const srcMsg = await delSrc.text().catch(() => '');
-        throw new Error(srcMsg)
-    }
-    alert(`Screening deleted: ${screeningDeleted}`);
-    await fetchAllScreenings();
-    } catch(err) {
+    try {
+        const delSrc = await postObjectAsJson(postScreeningUrl + "/" + screening.screeningId, screening, "DELETE");
+        if (!delSrc.ok) {
+            const srcMsg = await delSrc.text().catch(() => '');
+            throw new Error(srcMsg)
+        }
+        alert(`Screening deleted: ${screeningDeleted}`);
+        await fetchAllScreenings();
+    } catch (err) {
         alert(`Could not delete screening:  ${screeningDeleted} It is attached to a reservation. Remove the reservation first.`)
 
     }
@@ -678,51 +698,54 @@ const addEmployee = document.querySelector("#addEmployeeBtn");
 addEmployee.addEventListener("click", openAddEmployee);
 
 function openAddEmployee() {
-  const addEmployeeFrame = document.querySelector('.addEmployeeFrame');
-  const closeBtn = addEmployeeFrame.querySelector('.close-btn');
+    const addEmployeeFrame = document.querySelector('.addEmployeeFrame');
+    addEmployeeFrame.classList.add('active');
 
-      closeBtn.addEventListener('click', () => {
-        addEmployeeFrame.classList.remove('active');
-        document.querySelector('.addEmployee-form').reset();
-    });
 
-  addEmployeeFrame.classList.add('active');
-
-  const form = document.querySelector('.addEmployee-form');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(form);
-    const employeeData = {
-      employeeName: formData.get('employeeName'),
-      employeePassword: formData.get("employeePassowrd"),
-      employeeType: formData.get('employeeType'),
-      employeeCreatedDate: new Date().toISOString().slice(0, 10)
+    const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+            addEmployeeFrame.classList.remove('active');
+            document.querySelector('.addEmployee-form').reset();
+            document.removeEventListener('keydown', handleEsc);
+        }
     };
+    document.addEventListener('keydown', handleEsc);
 
-    console.log(employeeData);
+    const form = document.querySelector('.addEmployee-form');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    try {
-      const response = await fetch(`${API_BASE}/employee`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(employeeData)
-      });
+        const formData = new FormData(form);
+        const employeeData = {
+            employeeName: formData.get('employeeName'),
+            employeePassword: formData.get("employeePassowrd"),
+            employeeType: formData.get('employeeType'),
+            employeeCreatedDate: new Date().toISOString().slice(0, 10)
+        };
 
-      if (response.ok) {
-        addEmployeeFrame.classList.remove('active');
-        form.reset();
-        fetchEmployees();
-      } else {
-        alert('Failed to add employee');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Error adding employee');
-    }
-  });
+        console.log(employeeData);
+
+        try {
+            const response = await fetch(`${API_BASE}/employee`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeData)
+            });
+
+            if (response.ok) {
+                addEmployeeFrame.classList.remove('active');
+                form.reset();
+                fetchEmployees();
+            } else {
+                alert('Failed to add employee');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding employee');
+        }
+    });
 }
 
 
