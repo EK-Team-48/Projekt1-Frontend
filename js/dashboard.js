@@ -529,6 +529,7 @@ function createNewScreening(movies, theaters) {
 
     const submitScreeningButton = document.createElement("button");
     submitScreeningButton.type = "submit";
+    submitScreeningButton.className = "adminButton green"
     submitScreeningButton.textContent = "Create Screening";
 
     const cancelButton = document.createElement("button");
@@ -636,8 +637,8 @@ function displayAllScreenings(screenings) {
     cell = row.insertCell(cellCount++);
     const updateScreening = document.createElement("input");
     updateScreening.type = "button";
-    updateScreening.setAttribute("Value", "update screening");
-    updateScreening.className = "updateButton";
+    updateScreening.setAttribute("Value", "Update");
+    updateScreening.className = "adminButton grey";
     cell.appendChild(updateScreening);
 
     updateScreening.onclick = function () {
@@ -648,8 +649,8 @@ function displayAllScreenings(screenings) {
     cell = row.insertCell(cellCount++);
     const deleteScrenning = document.createElement("input");
     deleteScrenning.type = "button";
-    deleteScrenning.className = "deleteButton";
-    deleteScrenning.setAttribute("Value", "remove screening")
+    deleteScrenning.className = "adminButton delete";
+    deleteScrenning.setAttribute("Value", "Delete")
     cell.appendChild(deleteScrenning);
 
     deleteScrenning.onclick = function () {
@@ -736,11 +737,13 @@ function updateScreeningFunc(screening) {
 
     const saveButton = document.createElement("button");
     saveButton.type = "submit";
+    saveButton.classList.add('adminButton')
     saveButton.textContent = "Save Changes";
 
     const cancelButton = document.createElement("button");
     cancelButton.type = "button";
     cancelButton.textContent = "Cancel";
+    cancelButton.className = "adminButton grey";
     cancelButton.onclick = () => document.body.removeChild(overlay);
 
     form.appendChild(movieLabel);

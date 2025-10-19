@@ -986,6 +986,9 @@ adminContent::-webkit-scrollbar {
   flex-direction: column;
   gap: 1em;
   margin-right: calc(20%);
+  background: var(--background);
+  padding: 3em;
+  border-radius: 1em;
 }
 
 .createTheaterPopup form input {
@@ -1201,8 +1204,7 @@ Movie handler sektion slut
 .screeningTable {
   width: 100%;
   border-collapse: collapse;
-  color: #f1f1f1;
-  font-family: 'Segoe UI', sans-serif;
+  color: var(--text-secondary)
 }
 
 .screeningTable th,
@@ -1213,20 +1215,16 @@ Movie handler sektion slut
 }
 
 .screeningTable th {
-  background: #2a2e38;
+  background: var(--background-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 0.95rem;
+  font-size: 1em;
 }
 
 .screeningTable tr:nth-child(even) {
-  background: #262a34;
+  background: var(--background-secondary);
 }
 
-.screeningTable tr:hover {
-  background: #2f3542;
-  transition: background 0.2s ease;
-}
+
 
 
 
@@ -1241,47 +1239,31 @@ Movie handler sektion slut
 }
 
 .update-popup {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 1rem;
+  background: var(--background);
+  padding: 2em;
+  border-radius: 1em;
   width: 400px;
-  max-width: 90%;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  color: var(--text-secondary)
 }
 
 .update-form {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 1em;
 }
 
-.update-form label {
-  font-weight: bold;
-}
 
-.update-form input,
 .update-form select {
-  padding: 0.5rem;
-  font-size: 1rem;
+  font-size: 1em;
 }
 
-.update-form button {
-  margin-top: 1rem;
-  padding: 0.7rem;
-  cursor: pointer;
+.update-form input {
+  font-size: 1.25em;
 }
 
-.update-form button[type="submit"] {
-  background: #2d7ff9;
-  color: white;
-  border: none;
-}
 
-.update-form button[type="button"] {
-  background: #aaa;
-  color: white;
-  border: none;
-}
+
+
 
 .radio-group {
   display: flex;
