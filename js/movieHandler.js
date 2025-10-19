@@ -86,7 +86,7 @@ function renderMovies(allMovies) {
 
         const d = document.createElement('button');
         d.className = 'adminButton delete';
-        d.textContent = "Delete Movie"
+        d.textContent = "Delete"
 
         box.appendChild(poster);
         box.appendChild(t);
