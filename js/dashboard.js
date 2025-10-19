@@ -4,7 +4,7 @@ import { fetchAnyUrl, postObjectAsJson } from './modulejson.js';
 const API_BASE = 'http://localhost:8080/api/v1';
 
 
-let dashboardFrame, dashboardTheaters, dashboardMovies, dashboardScreenings, dashboardReservations, dashboardEmployees, theaterFrame, movieFrame, screeningsFrame, reservationsFrame, employeeFrame, content;
+let dashboardFrame, dashboardTheaters, dashboardMovies, dashboardScreenings, dashboardReservations, dashboardEmployees, theaterFrame, movieFrame, screeningsFrame, reservationsFrame, employeeFrame, content, createTheaterPopup, newTheaterBtn, createTheaterForm;
 
 let theaterContent;
 let movieContent;
@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
     dashboardReservations = document.querySelector('#dashboardReservations');
     dashboardEmployees = document.querySelector('#dashboardEmployees');
     content = document.querySelector('.adminContent');
+    createTheaterPopup = document.querySelector('.createTheaterPopup');
+    newTheaterBtn = document.querySelector('#newTheaterBtn');
+    createTheaterForm = document.querySelector('#createTheaterForm');
 
 
     theaterFrame = document.querySelector('#theaterFrame');
@@ -29,14 +32,25 @@ document.addEventListener('DOMContentLoaded', () => {
     reservationsFrame = document.querySelector('#reservationsFrame');
     employeeFrame = document.querySelector('#employeeFrame');
 
-
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePopup(); });
+    createTheaterPopup.addEventListener('click', e => { if (e.target === createTheaterPopup) closePopup()})
     dashboardTheaters.addEventListener('click', viewTheaters);
     dashboardMovies.addEventListener('click', viewMovies);
     dashboardScreenings.addEventListener('click', viewScreenings);
     dashboardReservations.addEventListener('click', viewReservations);
     dashboardEmployees.addEventListener('click', viewEmployees);
+    newTheaterBtn.addEventListener('click', () => createTheaterPopup.style.display = 'flex');
+    createTheaterForm.addEventListener('submit', createTheater)
+
+    viewTheaters();
+
 
 })
+
+function closePopup() {
+    createTheaterPopup.style.display = 'none';
+
+}
 
 
 function closeView() {
@@ -71,6 +85,27 @@ async function fetchTheaters() {
         title.textContent = t.theaterName;
         adminContentTheaterElement.appendChild(title);
 
+        let originalName = title.theaterName;
+        title.addEventListener('click', () => {
+            originalName = title.textContent;
+            title.setAttribute('contenteditable', true);
+            title.classList.add('editing');
+            title.focus();
+        })
+
+        title.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') {
+                e.preventDefault();
+                updateTheater(title, t.theaterId, t.theaterName);
+                title.blur();
+            }
+        })
+
+        title.addEventListener('blur', () => {
+        updateTheater(title, t.theaterId, t.theaterName);
+        });
+
+
         const button = document.createElement('button');
         button.textContent = 'Delete';
         button.className = 'adminButton delete';
@@ -87,7 +122,57 @@ async function fetchTheaters() {
         adminContentTheaterElement.appendChild(button);
         console.log(t);
     })
-    adminContentMovieElement.appendChild(button);
+}
+
+async function createTheater() {
+    const formData = new FormData(createTheaterForm);
+        const theaterData = {
+            theaterName: formData.get('theaterName'),
+            numberOfRows: formData.get("numberOfRows"),
+            seatsPerRow: formData.get('seatsPerRow'),
+        };
+
+        const res = await postObjectAsJson(`${API_BASE}/theaters`, theaterData, "POST");      
+            if(!res.ok) {
+              alert("Theater creation failed");
+              return;
+            }
+}
+
+async function updateTheater(element, theaterId, originalName) {
+    const newName = element.textContent.trim();
+
+    if (newName === originalName) {
+        element.removeAttribute('contenteditable');
+        element.classList.remove('editing');
+        return;
+    }
+
+    if (newName) {
+        try {
+            const payload = {
+                theaterName: newName
+            }
+
+            const res = await postObjectAsJson(`${API_BASE}/theaters/${theaterId}`, payload, "PUT");
+
+        if (!res.ok) {
+                console.error('Update failed:', await res.text());
+                alert('Failed to update theater name.');
+                element.textContent = originalName;
+            } else {
+                originalName = newName;
+                console.log('Theater name updated successfully!');
+            }
+        } catch (e) {
+            console.error('Network or fetch error:', e);
+            alert('An error occurred during the update.');
+            element.textContent = originalName;
+        }
+    }
+    console.log(element, theaterId, originalName);
+    element.removeAttribute('contenteditable');
+    element.classList.remove('editing');
 }
 
 

@@ -963,6 +963,48 @@ adminContent::-webkit-scrollbar {
   justify-content: space-between;
 }
 
+.createTheaterPopup {
+  display: none;
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(2px);
+  padding: 2em;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 15%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.createTheaterPopup form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-right: calc(20%);
+}
+
+.createTheaterPopup form input {
+  font-size: 1.5em;
+  background: transparent;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.editing {
+    border: 1px dashed #ccc;
+    padding: 2px;
+    background-color: #1a1a1a;
+}
+
+.createTheaterPopup form input::placeholder {
+  color: var(--text-primary);
+}
+
 
 #theaterFrame {
   display: none;

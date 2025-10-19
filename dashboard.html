@@ -28,9 +28,7 @@
     <div class="adminContentFrame" id="theaterFrame">
         <h1 id="adminContentTitle">THEATERS</h1>
         <div class="adminButtonContainer">
-            <button class="adminButton">New Theater</button>
-            <button class="adminButton grey">Edit Example Button</button>
-            <button class="adminButton delete">Delete Example Button</button>
+            <button class="adminButton" id="newTheaterBtn">New Theater</button>
         </div>
         <div class="adminContent">
             <div class="adminContentTheaterElement">
@@ -46,6 +44,15 @@
                 <button class="adminButton delete">Delete</button>
             </div>
 
+        </div>
+       
+        <div class="createTheaterPopup">
+            <form id="createTheaterForm">
+                <input type="text" name="theaterName" placeholder="Theater name" required>
+                <input type="number" name="numberOfRows" placeholder="Seat rows" required>
+                <input type="number" name="seatsPerRow" placeholder="Seats per row" required>
+                <button class="adminButton green">Create</button>
+            </form>
         </div>
     </div>
 
@@ -87,8 +94,6 @@
 
             </div>
             <div class="adminContentTheaterElement">
-                <h2>Example 1</h2>
-                <button class="adminButton delete">Delete</button>
             </div>
 
         </div>
