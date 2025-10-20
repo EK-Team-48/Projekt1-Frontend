@@ -211,12 +211,8 @@ function openFindReservation() {
             document.removeEventListener('keydown', handleEsc);
         }
     };
-    document.addEventListener('keydown', handleEsc);
+    popup.addEventListener('keydown', handleEsc);
 
-    popup.addEventListener('click', () => {
-        popup.remove();
-        document.removeEventListener('keydown', handleEsc);
-    });
 
 
     const form = popup.querySelector('.findReservation-form');
@@ -227,13 +223,11 @@ function openFindReservation() {
         try {
             const reservation = await fetchAnyUrl(`${API_BASE}/reservations/${id}`);
             if (reservation) {
-                popup.remove();
                 openReservationDetails(reservation);
             } else {
                 alert('Reservation not found');
             }
         } catch (error) {
-            alert('Error finding reservation');
             console.error(error);
         }
     });
